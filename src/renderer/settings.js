@@ -208,8 +208,10 @@
     return [
       el('h1', { text: t('settings.tab.privacy') }),
       card(
-        opt('tray.hideFromCapture', 'settings.captureHint', check(s.contentProtection, (v) => setSetting('contentProtection', v))),
-        opt('tray.hideOnPresent', 'settings.presentHint', check(s.hideOnPresentation, (v) => setSetting('hideOnPresentation', v))),
+        D.features.captureProtection
+          ? opt('tray.hideFromCapture', 'settings.captureHint', check(s.contentProtection, (v) => setSetting('contentProtection', v)))
+          : opt('tray.hideFromCapture', 'settings.notOnThisOs', el('span', { class: 'muted small', text: '—' })),
+        D.features.presentationDetection ? opt('tray.hideOnPresent', 'settings.presentHint', check(s.hideOnPresentation, (v) => setSetting('hideOnPresentation', v))) : null,
       ),
       el('h2', { text: t('settings.pin.title') }),
       el('p', { class: 'muted small', text: t('settings.pin.warning') }),

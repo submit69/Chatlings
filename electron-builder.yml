@@ -10,7 +10,7 @@ files:
   - build/tray*.png
   - package.json
   - "!**/*.map"
-  # koffi ships prebuilt binaries for every OS; keep only Windows x64.
+  # koffi is only used on Windows (presentation mode); drop the other OS binaries.
   - "!node_modules/@koromix/koffi-{linux,darwin,freebsd,openbsd,musl}*/**"
   - "!node_modules/koffi/vendor/**"
   - "!node_modules/koffi/doc/**"
@@ -46,6 +46,47 @@ nsis:
   artifactName: Chatlings-Setup-${version}.${ext}
 portable:
   artifactName: Chatlings-${version}-portable.${ext}
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+    - target: deb
+      arch: [x64]
+  icon: build/icon.png
+  category: Network
+  maintainer: submit69 <submit69@users.noreply.github.com>
+  vendor: Chatlings contributors
+  synopsis: Floating chat heads for web chats, several accounts at once
+  description: Chatlings puts Zalo, Messenger, WhatsApp, Telegram, Discord and other web chats in floating bubbles on the edge of the screen.
+  desktop:
+    entry:
+      StartupWMClass: Chatlings
+      Keywords: chat;zalo;messenger;whatsapp;telegram;discord;
+appImage:
+  artifactName: Chatlings-${version}-x86_64.${ext}
+  # Ubuntu 23.10+ blocks the unprivileged user namespaces Chromium's sandbox
+  # needs, and an AppImage cannot ship the setuid helper, so the AppImage runs
+  # without the OS sandbox. The .deb installs the helper and keeps the sandbox.
+  executableArgs: ["--no-sandbox"]
+deb:
+  artifactName: chatlings_${version}_amd64.${ext}
+
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  icon: build/icon.png
+  category: public.app-category.social-networking
+  # No Apple Developer certificate: ad-hoc signature, so the app runs on Apple
+  # silicon. Gatekeeper still asks once (right-click → Open).
+  identity: "-"
+  hardenedRuntime: false
+  extendInfo:
+    NSMicrophoneUsageDescription: Voice and video calls in your chat apps.
+    NSCameraUsageDescription: Video calls in your chat apps.
+dmg:
+  artifactName: Chatlings-${version}-mac-${arch}.${ext}
 publish:
   provider: github
   owner: submit69

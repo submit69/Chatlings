@@ -5,6 +5,7 @@
 const path = require('path');
 const { BrowserWindow, screen } = require('electron');
 const layout = require('./layout');
+const { isMac, features } = require('./platform');
 
 function createDock({ store, onReady }) {
   const win = new BrowserWindow({
@@ -18,6 +19,8 @@ function createDock({ store, onReady }) {
     skipTaskbar: true,
     alwaysOnTop: true,
     focusable: false,
+    // macOS: a non-activating panel, so clicking a bubble does not steal focus.
+    ...(isMac ? { type: 'panel' } : {}),
     hasShadow: false,
     minimizable: false,
     maximizable: false,
@@ -34,7 +37,8 @@ function createDock({ store, onReady }) {
     },
   });
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setIgnoreMouseEvents(true, { forward: true });
+  if (isMac) win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  if (features.clickThrough) win.setIgnoreMouseEvents(true, { forward: true });
   win.loadFile(path.join(__dirname, '..', 'renderer', 'dock.html'));
   win.webContents.once('did-finish-load', () => onReady && onReady());
 
@@ -73,7 +77,7 @@ function createDock({ store, onReady }) {
       relayout();
     },
     setHover(on) {
-      if (!win.isDestroyed()) win.setIgnoreMouseEvents(!on, { forward: true });
+      if (features.clickThrough && !win.isDestroyed()) win.setIgnoreMouseEvents(!on, { forward: true });
     },
     dragStart() {
       dragging = true;

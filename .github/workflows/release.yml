@@ -19,8 +19,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Check tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} != package.json v$v"; exit 1; }
 
-  build:
+  build-win:
     needs: test
     runs-on: windows-latest
     env:
@@ -34,12 +40,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Check tag matches package.json
-        if: startsWith(github.ref, 'refs/tags/v')
-        shell: bash
-        run: |
-          v=$(node -p "require('./package.json').version")
-          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} != package.json v$v"; exit 1; }
 
       # ---- unsigned ----
       - name: Build
@@ -103,33 +103,76 @@ jobs:
           cp signed-installers/*.exe dist/
           node scripts/update-latest-yml.mjs dist
 
-      # One step creates the release and uploads everything. Letting
-      # electron-builder publish the installer and the portable exe in parallel
-      # makes both try to create the release, and the second one fails.
-      # latest.yml + .blockmap are what the installed app's auto-update reads.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: win
+          path: |
+            dist/*.exe
+            dist/*.blockmap
+            dist/latest.yml
+
+  build-linux:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx electron-builder --linux --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/latest-linux.yml
+
+  build-mac:
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx electron-builder --mac --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac
+          path: dist/*.dmg
+
+  # One job creates the release and uploads everything. Letting electron-builder
+  # publish targets in parallel makes each try to create the release, and all
+  # but the first fail. latest.yml / latest-linux.yml + .blockmap are what the
+  # installed apps' auto-update reads.
+  publish:
+    needs: [build-win, build-linux, build-mac]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
       - name: Publish to GitHub Releases
-        if: startsWith(github.ref, 'refs/tags/v')
-        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls -la dist
           gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "Chatlings ${GITHUB_REF_NAME#v}" --generate-notes
-          gh release upload "$GITHUB_REF_NAME" dist/*.exe dist/*.blockmap dist/latest.yml --clobber
-      - name: Keep the build (manual runs)
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: chatlings-windows
-          path: |
-            dist/*.exe
-            dist/latest.yml
+          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
 
   # Opens the winget-pkgs PR for each new release. Needs a classic GitHub token
   # with public_repo scope in the WINGET_TOKEN secret, and the first version
   # (submit69.Chatlings 0.1.1) already merged into microsoft/winget-pkgs.
   winget:
-    needs: build
+    needs: publish
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: windows-latest
     env:

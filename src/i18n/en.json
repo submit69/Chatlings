@@ -202,6 +202,7 @@
   "settings.acc.outside": "Outside these hours",
 
   "settings.captureHint": "Chatlings windows are left out of screenshots, recordings and screen sharing (Meet, Zoom, Teams, OBS). You still see them. Turn off to take a screenshot of your bubbles.",
+  "settings.notOnThisOs": "Not available on Linux: the system does not let apps hide from screen capture.",
   "settings.presentHint": "Hides bubbles when Windows reports presentation mode or a full-screen game. A maximised Excel does not count.",
   "settings.pin.title": "PIN lock",
   "settings.pin.warning": "The PIN only stops other people using this PC from opening your chats. It does not encrypt your login data.",

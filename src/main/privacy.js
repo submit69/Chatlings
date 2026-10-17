@@ -7,6 +7,8 @@
 //    SHQueryUserNotificationState through koffi. QUNS_BUSY (any full-screen
 //    app, e.g. maximised Excel) is deliberately NOT hidden.
 
+const { features } = require('./platform');
+
 const QUNS = { NOT_PRESENT: 1, BUSY: 2, RUNNING_D3D_FULL_SCREEN: 3, PRESENTATION_MODE: 4, ACCEPTS_NOTIFICATIONS: 5, QUIET_TIME: 6, APP: 7 };
 
 function shouldHideFor(state) {
@@ -48,7 +50,7 @@ function createPrivacy({ windows, isProtectionOn, isHideOnPresentation, onPresen
   let hidden = false;
   const api = {
     protect(win) {
-      if (win && !win.isDestroyed()) win.setContentProtection(isProtectionOn());
+      if (features.captureProtection && win && !win.isDestroyed()) win.setContentProtection(isProtectionOn());
     },
     applyAll() {
       for (const w of windows()) api.protect(w);

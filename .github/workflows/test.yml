@@ -2,12 +2,17 @@ name: Test
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'dev/**']
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  unit:
-    runs-on: windows-latest
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,4 +20,44 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Unit tests
+        run: npm test
+
+      # Start the real app with fake chats and check it comes up.
+      - name: Install a virtual display (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a node scripts/smoke.mjs
+      - name: Smoke test
+        if: runner.os != 'Linux'
+        run: node scripts/smoke.mjs
+
+      # Click, hover, drag, previews, full window, PIN, sleep… in real windows.
+      - name: End-to-end (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a --server-args="-screen 0 1600x1000x24" node --test test/e2e/run.mjs
+      - name: End-to-end
+        if: runner.os != 'Linux'
+        run: node --test test/e2e/run.mjs
+
+      # Make sure the packages still build on every OS (not published).
+      - name: Package
+        shell: bash
+        run: |
+          case "$RUNNER_OS" in
+            Windows) npx electron-builder --win --publish never ;;
+            Linux)   npx electron-builder --linux --publish never ;;
+            macOS)   npx electron-builder --mac --publish never ;;
+          esac
+          ls -la dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chatlings-${{ runner.os }}
+          retention-days: 7
+          path: |
+            dist/*.exe
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.dmg

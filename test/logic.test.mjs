@@ -229,3 +229,16 @@ test('shouldAutoLock', () => {
   assert.equal(lock.shouldAutoLock(599, 10), false);
   assert.equal(lock.shouldAutoLock(99999, 0), false);
 });
+
+// ---------- platform ----------
+test('user agent matches the OS and the real Chrome version', async () => {
+  const { chromeUA, features, isWin, isMac, isLinux } = require('../src/main/platform.js');
+  const ua = chromeUA('140.0.7339.80');
+  assert.match(ua, /Chrome\/140\.0\.0\.0 Safari\/537\.36$/);
+  assert.doesNotMatch(ua, /Electron/);
+  if (isWin) assert.match(ua, /Windows NT 10\.0/);
+  if (isMac) assert.match(ua, /Macintosh/);
+  if (isLinux) assert.match(ua, /X11; Linux x86_64/);
+  assert.equal(features.clickThrough, !isLinux);
+  assert.equal(features.presentationDetection, isWin);
+});

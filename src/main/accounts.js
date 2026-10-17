@@ -16,10 +16,7 @@ const DOM_POLL_MS = 4000;
 const SETTLE_MS = 8000; // ignore unread jumps right after load (initial sync)
 const MAX_PREVIEWS = 3;
 
-function chromeUA() {
-  const major = String(process.versions.chrome || '140').split('.')[0];
-  return `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${major}.0.0.0 Safari/537.36`;
-}
+const { chromeUA } = require('./platform');
 
 function newRuntime() {
   return {

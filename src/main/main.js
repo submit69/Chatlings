@@ -33,6 +33,7 @@ const { accountMode, tomorrowMorning } = require('./schedule');
 const { MODES: SLEEP_MODES } = require('./sleep');
 const picker = require('./picker');
 const updater = require('./updater');
+const platform = require('./platform');
 
 const { t } = i18n;
 
@@ -53,7 +54,8 @@ if (!app.requestSingleInstanceLock()) {
 const ctx = { t };
 
 function start() {
-  Menu.setApplicationMenu(null);
+  // macOS needs an app menu, or Cmd+C / Cmd+V / Cmd+Q stop working in the chats.
+  Menu.setApplicationMenu(platform.isMac ? Menu.buildFromTemplate([{ role: 'appMenu' }, { role: 'editMenu' }, { role: 'windowMenu' }]) : null);
   const store = createStore(path.join(app.getPath('userData'), 'chatlings.json'));
   ctx.store = store;
   seedFakeAccounts(store);
@@ -303,7 +305,7 @@ function start() {
         privacy.tick();
         break;
       case 'autoLaunch':
-        if (app.isPackaged) app.setLoginItemSettings({ openAtLogin: !!value, args: ['--hidden'] });
+        platform.setAutoLaunch(app, !!value);
         break;
       case 'locale':
         i18n.setLocale(i18n.pickLocale(value, app.getLocale()));
@@ -574,6 +576,7 @@ function start() {
     const { pin, ...settings } = store.settings;
     return {
       settings: { ...settings, pinSet: !!pin },
+      features: platform.features,
       accounts: store.accounts().map((a) => {
         const st = accounts.state(a.id);
         return { ...a, runtime: { awake: st.awake, count: st.count, dot: st.dot, profileName: st.profile ? st.profile.name : null } };
@@ -662,6 +665,8 @@ function start() {
   });
 
   // Starting Chatlings again (Start menu, desktop icon) opens the full app.
+  // macOS: clicking the Dock icon opens the full window.
+  app.on('activate', () => openFull());
   app.on('second-instance', () => {
     setSetting('hideAll', false);
     openFull();

@@ -17,7 +17,9 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 async function launch(extraEnv = {}) {
   const env = { ...process.env, CHATLINGS_FAKE: '1', CHATLINGS_FAKE_ACCOUNTS: '4', CHATLINGS_USERDATA: fs.mkdtempSync(path.join(os.tmpdir(), 'bb-e2e-')), ...extraEnv };
   delete env.ELECTRON_RUN_AS_NODE; // set by some editors; would start Electron as plain Node
-  const app = await _electron.launch({ args: [root], env });
+  // CI Linux runners have no setuid sandbox helper for the npm-installed Electron.
+  const args = [root, ...(process.platform === 'linux' ? ['--no-sandbox'] : [])];
+  const app = await _electron.launch({ args, env });
   const ev = (fn, arg) => app.evaluate(fn, arg);
   const until = async (fn, arg, ms = 20000, label = 'condition') => {
     const end = Date.now() + ms;
@@ -263,7 +265,9 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
       assert.equal(await ev(() => globalThis.__chatlings.popup.isFullOpen()), false, 'closing goes back to bubbles only');
     });
 
-    await t.test('content protection hides the bubbles from screen capture', async () => {
+    // Windows only: Linux cannot hide windows from capture, and macOS CI runners
+    // have no screen-recording permission for desktopCapturer.
+    await t.test('content protection hides the bubbles from screen capture', { skip: process.platform !== 'win32' }, async () => {
       // magenta ring on the first bubble, easy to find in a screenshot
       await ev(() => {
         const c = globalThis.__chatlings;

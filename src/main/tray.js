@@ -4,6 +4,7 @@ const { Tray, Menu, nativeImage, app, shell } = require('electron');
 const registry = require('../adapters');
 const { badgeText, total } = require('./unread');
 const { tomorrowMorning } = require('./schedule');
+const { features } = require('./platform');
 
 const BUILD = path.join(__dirname, '..', '..', 'build');
 
@@ -100,8 +101,8 @@ function createTray(ctx) {
       {
         label: t('tray.privacy'),
         submenu: [
-          { label: t('tray.hideFromCapture'), type: 'checkbox', checked: !!s.contentProtection, click: (i) => ctx.setSetting('contentProtection', i.checked) },
-          { label: t('tray.hideOnPresent'), type: 'checkbox', checked: !!s.hideOnPresentation, click: (i) => ctx.setSetting('hideOnPresentation', i.checked) },
+          ...(features.captureProtection ? [{ label: t('tray.hideFromCapture'), type: 'checkbox', checked: !!s.contentProtection, click: (i) => ctx.setSetting('contentProtection', i.checked) }] : []),
+          ...(features.presentationDetection ? [{ label: t('tray.hideOnPresent'), type: 'checkbox', checked: !!s.hideOnPresentation, click: (i) => ctx.setSetting('hideOnPresentation', i.checked) }] : []),
           { label: t('tray.lockNow'), enabled: ctx.lock.isEnabled() && !ctx.lock.isLocked(), click: () => ctx.lockNow() },
         ],
       },

@@ -1,7 +1,8 @@
 'use strict';
-// Updates come only from this project's GitHub Releases. The installer build
-// uses electron-updater; the portable build (and dev) only checks the latest
-// release tag and offers to open the download page.
+// Updates come only from this project's GitHub Releases. The Windows installer
+// and the Linux AppImage update themselves (electron-updater); the portable exe,
+// the .deb, macOS (not signed by Apple) and dev builds only check the latest
+// release tag and offer to open the download page.
 const { app, dialog, shell, net } = require('electron');
 const { t } = require('./i18n');
 
@@ -25,13 +26,16 @@ async function latestTag() {
   return j.tag_name;
 }
 
-function isPortable() {
-  return !!process.env.PORTABLE_EXECUTABLE_DIR;
+function canSelfUpdate() {
+  if (!app.isPackaged) return false;
+  if (process.platform === 'win32') return !process.env.PORTABLE_EXECUTABLE_DIR;
+  if (process.platform === 'linux') return !!process.env.APPIMAGE;
+  return false; // macOS builds are not signed by Apple, so Squirrel.Mac refuses them
 }
 
 async function check({ interactive }) {
   try {
-    if (app.isPackaged && !isPortable()) {
+    if (canSelfUpdate()) {
       const { autoUpdater } = require('electron-updater');
       autoUpdater.autoDownload = true;
       autoUpdater.autoInstallOnAppQuit = true;

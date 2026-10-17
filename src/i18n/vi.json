@@ -202,6 +202,7 @@
   "settings.acc.outside": "Ngoài giờ",
 
   "settings.captureHint": "Cửa sổ Chatlings không lọt vào ảnh chụp, video quay và chia sẻ màn hình (Meet, Zoom, Teams, OBS). Bạn vẫn thấy bình thường. Tắt đi nếu muốn chụp màn hình bong bóng.",
+  "settings.notOnThisOs": "Không có trên Linux: hệ điều hành không cho app ẩn khỏi ảnh chụp màn hình.",
   "settings.presentHint": "Ẩn bong bóng khi Windows báo đang trình chiếu hoặc chơi game toàn màn hình. Excel phóng to không tính.",
   "settings.pin.title": "Khoá bằng PIN",
   "settings.pin.warning": "PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN không mã hoá dữ liệu đăng nhập.",
