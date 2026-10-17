@@ -11,7 +11,7 @@ Nothing else. No telemetry, no analytics, no crash reporting, no ads.
 
 ## What is stored on your computer
 
-All in your Windows user profile (`%APPDATA%\Chatlings`):
+All in your user profile: `%APPDATA%\Chatlings` on Windows, `~/Library/Application Support/Chatlings` on macOS, `~/.config/Chatlings` on Linux.
 
 - `chatlings.json`: your accounts (name, colour, skin, schedule…), the dock position and settings. If you set a PIN, only a salted scrypt hash of it is stored.
 - `Partitions\<account>\`: one separate browser profile per account (cookies, local storage). This is how you stay logged in, and how several accounts of the same app stay separate.
@@ -20,12 +20,12 @@ Message previews (the last 3 notifications per account) are kept **in memory onl
 
 ## The PIN
 
-The PIN stops someone using your PC from opening your chats through Chatlings. It does **not** encrypt the login data on disk. Anyone with access to your Windows account can still read the browser profiles, like with any browser. Use Windows' own sign-in and disk encryption (BitLocker) for that.
+The PIN stops someone using your PC from opening your chats through Chatlings. It does **not** encrypt the login data on disk. Anyone with access to your user account can still read the browser profiles, like with any browser. Use your system's own sign-in and disk encryption (BitLocker, FileVault, LUKS) for that.
 
 ## Screen sharing
 
-By default Chatlings' windows are excluded from screenshots, recordings and screen sharing (Windows 10 version 2004 or newer). You see them; the people watching your shared screen do not. On older Windows versions this protection is not available.
+By default Chatlings' windows are excluded from screenshots, recordings and screen sharing (Windows 10 version 2004 or newer, and macOS). You see them; the people watching your shared screen do not. Older Windows versions and Linux do not offer this protection.
 
 ## Removing everything
 
-Remove each account (right-click its bubble → Remove account), or uninstall Chatlings and delete `%APPDATA%\Chatlings`.
+Remove each account (right-click its bubble → Remove account), or uninstall Chatlings and delete that folder.

@@ -26,7 +26,7 @@ jobs:
       # Start the real app with fake chats and check it comes up.
       - name: Install a virtual display (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb openbox
       - name: Smoke test (Linux)
         if: runner.os == 'Linux'
         run: xvfb-run -a node scripts/smoke.mjs
@@ -37,7 +37,8 @@ jobs:
       # Click, hover, drag, previews, full window, PIN, sleep… in real windows.
       - name: End-to-end (Linux)
         if: runner.os == 'Linux'
-        run: xvfb-run -a --server-args="-screen 0 1600x1000x24" node --test test/e2e/run.mjs
+        # with a window manager, like a real desktop (minimise, focus, stacking)
+        run: xvfb-run -a --server-args="-screen 0 1600x1000x24" sh -c "openbox & sleep 2; node --test test/e2e/run.mjs"
       - name: End-to-end
         if: runner.os != 'Linux'
         run: node --test test/e2e/run.mjs

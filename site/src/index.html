@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Chatlings: bong bóng chat nổi cho Zalo, Messenger, WhatsApp trên máy tính</title>
-    <meta name="description" content="Zalo, Messenger, WhatsApp, Telegram, Discord thành bong bóng nổi ở mép màn hình. Nhiều tài khoản cùng lúc, tự ẩn khi chia sẻ màn hình. Miễn phí, mã nguồn mở, không thu thập dữ liệu." />
+    <meta name="description" content="Zalo, Messenger, WhatsApp, Telegram, Discord thành bong bóng nổi ở mép màn hình. Nhiều tài khoản cùng lúc, tự ẩn khi chia sẻ màn hình. Miễn phí, mã nguồn mở, cho Windows, macOS và Linux." />
     <link rel="icon" type="image/png" href="/icon.png" />
     <link rel="canonical" href="https://chatlings.submit69.com/" />
     <meta property="og:type" content="website" />
@@ -185,6 +185,19 @@
         margin-top: 12px;
         font-size: 14px;
         color: var(--muted);
+      }
+      .others {
+        margin-top: 6px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .os-note {
+        margin: 10px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .os-note b {
+        color: var(--fg);
       }
       .video {
         margin: 36px auto 0;
@@ -378,12 +391,12 @@
 
     <header class="hero">
       <div class="wrap">
-        <span class="pill" data-i18n="hero.pill">Miễn phí · Mã nguồn mở · Windows 10/11</span>
+        <span class="pill" data-i18n="hero.pill">Miễn phí · Mã nguồn mở · Windows · macOS · Linux</span>
         <h1><span data-i18n="hero.h1a">Chat nổi trên màn hình,</span> <span class="g" data-i18n="hero.h1b">đang làm vẫn trả lời được</span></h1>
         <p class="sub" data-i18n="hero.sub">Zalo, Messenger, WhatsApp, Telegram, Discord… thành bong bóng nhỏ ở mép màn hình, như bong bóng chat trên điện thoại. Nhiều nick cùng lúc, tin mới bật lên ngay cạnh bong bóng.</p>
         <div class="cta">
           <a class="btn primary dl" id="dl" href="https://github.com/submit69/Chatlings/releases/latest"
-            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span data-i18n="hero.download">Tải cho Windows</span></a
+            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span class="dl-label" data-i18n="hero.download">Tải cho Windows</span></a
           >
           <a class="btn" href="https://github.com/submit69/Chatlings" rel="noopener"
             ><svg viewBox="0 0 24 24"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.5 18.3 4.8 18.3 4.8c.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" /></svg
@@ -391,6 +404,7 @@
           >
         </div>
         <div class="fine"><span id="ver"></span> <span data-i18n="hero.fine">Không cần quyền admin. Không thu thập dữ liệu.</span></div>
+        <div class="others"><span data-i18n="hero.others">Bản khác:</span> <a data-asset="win" href="https://github.com/submit69/Chatlings/releases/latest">Windows</a> · <a data-asset="mac-arm64" href="https://github.com/submit69/Chatlings/releases/latest">macOS (Apple M)</a> · <a data-asset="mac-x64" href="https://github.com/submit69/Chatlings/releases/latest">macOS (Intel)</a> · <a data-asset="appimage" href="https://github.com/submit69/Chatlings/releases/latest">Linux AppImage</a> · <a data-asset="deb" href="https://github.com/submit69/Chatlings/releases/latest">Linux .deb</a></div>
         <div class="video">
           <video id="video" autoplay muted loop playsinline preload="auto" poster="/chatlings-demo-vi.jpg" aria-label="Demo">
             <source src="/chatlings-demo-vi.mp4" type="video/mp4" />
@@ -417,7 +431,7 @@
           <div class="card"><div class="ico">💬</div><h3 data-i18n="f2.t">Tin mới bật lên</h3><p data-i18n="f2.d">Có tin là thẻ xem trước hiện ngay cạnh bong bóng vài giây, không chiếm bàn phím khi đang gõ.</p></div>
           <div class="card"><div class="ico">👥</div><h3 data-i18n="f3.t">Nhiều nick cùng lúc</h3><p data-i18n="f3.d">2 Zalo + 1 WhatsApp + 1 Discord? Được. Mỗi nick tách riêng, không đá nhau.</p></div>
           <div class="card"><div class="ico">🖥️</div><h3 data-i18n="f4.t">Cửa sổ đầy đủ khi cần</h3><p data-i18n="f4.d">Mở app là ra khung chat to với danh sách nick bên trái. Thu nhỏ lại là thành bong bóng.</p></div>
-          <div class="card"><div class="ico">🙈</div><h3 data-i18n="f5.t">Ẩn khi chia sẻ màn hình</h3><p data-i18n="f5.d">Meet, Zoom, Teams, OBS không thấy bong bóng và cửa sổ chat. Bạn vẫn thấy bình thường.</p></div>
+          <div class="card"><div class="ico">🙈</div><h3 data-i18n="f5.t">Ẩn khi chia sẻ màn hình</h3><p data-i18n="f5.d">Meet, Zoom, Teams, OBS không thấy bong bóng và cửa sổ chat. Bạn vẫn thấy bình thường. (Windows, macOS)</p></div>
           <div class="card"><div class="ico">🐱</div><h3 data-i18n="f6.t">Mèo, cún có cảm xúc</h3><p data-i18n="f6.d">Có tin thì nhảy, trả lời nhanh thì thả tim, để tin tồn lâu thì cụp tai.</p></div>
           <div class="card"><div class="ico">🌙</div><h3 data-i18n="f7.t">Giờ làm việc, không làm phiền</h3><p data-i18n="f7.d">Đặt giờ riêng từng nick (cả ca đêm), nhóm Công việc / Cá nhân, im lặng 1 giờ hay đến sáng mai.</p></div>
           <div class="card"><div class="ico">🔒</div><h3 data-i18n="f8.t">Khoá PIN, âm báo riêng</h3><p data-i18n="f8.d">Tự khoá khi rời máy. Mỗi nick một tiếng báo: chuông, meo, gâu hoặc file của bạn.</p></div>
@@ -432,7 +446,10 @@
         <p class="lead" data-i18n="i.lead">Cài riêng cho tài khoản Windows của bạn, không cần quyền admin. Có tự cập nhật.</p>
         <div class="steps">
           <div class="card"><h3 data-i18n="i1.t">Tải file cài</h3><p data-i18n="i1.d">Bấm "Tải cho Windows" ở trên. Hoặc dùng bản portable trên trang Releases, không cần cài.</p></div>
-          <div class="card"><h3 data-i18n="i2.t">Mở file</h3><p data-i18n="i2.d">File chưa được ký số nên Windows có thể cảnh báo: bấm "More info" rồi "Run anyway". Mã nguồn công khai trên GitHub.</p></div>
+          <div class="card"><h3 data-i18n="i2.t">Mở file</h3><p data-i18n="i2.d">File chưa được ký số nên hệ điều hành có thể hỏi lại một lần. Mã nguồn công khai trên GitHub.</p>
+            <p class="os-note"><b>Windows:</b> <span data-i18n="i2.win">bấm "More info" rồi "Run anyway".</span></p>
+            <p class="os-note"><b>macOS:</b> <span data-i18n="i2.mac">kéo vào Applications, chuột phải → Open. Nếu bị chặn: System Settings → Privacy &amp; Security → Open Anyway.</span></p>
+            <p class="os-note"><b>Linux:</b> <span data-i18n="i2.linux">cài .deb bằng "sudo apt install ./chatlings_*.deb", hoặc chmod +x file AppImage rồi chạy.</span></p></div>
           <div class="card"><h3 data-i18n="i3.t">Thêm nick</h3><p data-i18n="i3.d">Chọn app, đăng nhập trên trang chính thức của app (Zalo, WhatsApp, Telegram quét QR). Xong.</p></div>
         </div>
       </div>
@@ -458,7 +475,7 @@
         <details><summary data-i18n="q3.q">Có làm thoát Zalo trên điện thoại hay máy tính không?</summary><p data-i18n="q3.a">Không đụng điện thoại. Zalo và WhatsApp giới hạn số phiên web/máy tính cho mỗi tài khoản, nên nếu đã đủ giới hạn, đăng nhập ở đây có thể làm thoát một phiên web khác của cùng nick đó. Các nick khác nhau không ảnh hưởng nhau.</p></details>
         <details><summary data-i18n="q4.q">Sao không có LINE, Viber, Signal?</summary><p data-i18n="q4.a">Các app này không có bản web nên không có gì để đưa vào bong bóng. Với app chat web khác, bạn có thể tự thêm bằng địa chỉ trang.</p></details>
         <details><summary data-i18n="q5.q">Tốn RAM không?</summary><p data-i18n="q5.a">Phần của Chatlings khoảng 100 MB. Mỗi nick đang mở tốn RAM như một tab Chrome của trang đó. Nick ít dùng có thể cho ngủ để gần như 0 MB.</p></details>
-        <details><summary data-i18n="q6.q">Có bản macOS, Linux không?</summary><p data-i18n="q6.a">Hiện chỉ có Windows 10/11. macOS và Linux nằm trong kế hoạch.</p></details>
+        <details><summary data-i18n="q6.q">Có bản macOS, Linux, điện thoại không?</summary><p data-i18n="q6.a">Có Windows 10/11, macOS (chip Apple và Intel) và Linux (Ubuntu, Debian…). Trên Linux không ẩn được khi chia sẻ màn hình, và môi trường Wayland không cho app tự đặt vị trí cửa sổ nên bong bóng có thể không nằm sát mép. iPhone không cho app nào nổi đè lên app khác nên không có bản iOS.</p></details>
       </div>
     </section>
 
@@ -468,7 +485,7 @@
         <p class="lead" data-i18n="end.lead">Thích thì cho dự án một ⭐ trên GitHub nhé.</p>
         <div class="cta">
           <a class="btn primary dl" href="https://github.com/submit69/Chatlings/releases/latest"
-            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span data-i18n="hero.download">Tải cho Windows</span></a
+            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span class="dl-label" data-i18n="hero.download">Tải cho Windows</span></a
           >
           <a class="btn" href="https://github.com/submit69/Chatlings" rel="noopener">⭐ GitHub</a>
         </div>

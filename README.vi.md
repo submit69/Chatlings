@@ -12,7 +12,7 @@ Nhiều tài khoản cùng lúc · bong bóng mèo & cún · tự ẩn khi share
 
 <img src="docs/demo.gif" width="760" alt="Bong bóng Zalo, WhatsApp, Discord nổi trên bảng tính; có tin mới thì mèo nhảy, rê chuột xem trước tin, bấm vào mở chat" />
 
-### [⬇ Tải cho Windows](https://github.com/submit69/chatlings/releases/latest) · [Trang giới thiệu & video 30 giây](https://chatlings.submit69.com)
+### [⬇ Tải cho Windows, macOS, Linux](https://github.com/submit69/chatlings/releases/latest) · [Trang giới thiệu & video 30 giây](https://chatlings.submit69.com)
 
 </div>
 
@@ -68,9 +68,17 @@ Tăng tốc phần cứng (GPU) mặc định **tắt** vì tiết kiệm khoả
 
 ## Cài đặt
 
-1. Tải `Chatlings-Setup-x.y.z.exe` (bản cài, tự cập nhật) hoặc `Chatlings-x.y.z-portable.exe` ở mục [Releases](https://github.com/submit69/chatlings/releases/latest).
-2. File exe chưa được ký số nên Windows SmartScreen sẽ cảnh báo. Bấm **More info → Run anyway**. Bạn có thể đọc toàn bộ mã nguồn trước khi chạy.
-3. Chọn app, đăng nhập trên trang của chính app đó (quét QR với Zalo / WhatsApp / Telegram). Xong.
+Tải ở mục [Releases](https://github.com/submit69/chatlings/releases/latest). File chưa được ký số nên hệ điều hành sẽ hỏi lại một lần; bạn có thể đọc toàn bộ mã nguồn trước.
+
+| | File | Lần đầu mở |
+|---|---|---|
+| **Windows 10/11** | `Chatlings-Setup-x.y.z.exe` (tự cập nhật) hoặc `…-portable.exe` | SmartScreen: **More info → Run anyway** |
+| **macOS 11+** | `Chatlings-x.y.z-mac-arm64.dmg` (chip Apple M) hoặc `…-mac-x64.dmg` (Intel) | Kéo vào Applications, **chuột phải → Open**. Nếu bị chặn: System Settings → Privacy & Security → **Open Anyway** |
+| **Linux** (Ubuntu, Debian…) | `chatlings_x.y.z_amd64.deb`, hoặc `Chatlings-x.y.z-x86_64.AppImage` (tự cập nhật) | `sudo apt install ./chatlings_*.deb`, hoặc `chmod +x` file AppImage rồi chạy |
+
+Sau đó chọn app, đăng nhập trên trang của chính app đó (quét QR với Zalo / WhatsApp / Telegram). Xong.
+
+**Khác biệt giữa các hệ điều hành.** Ẩn khi chia sẻ màn hình chỉ có trên Windows và macOS (Linux không có cơ chế này); ẩn khi trình chiếu chỉ có trên Windows. Trên Linux, phần viền trong suốt quanh bong bóng không bấm xuyên qua được, và trong Wayland hệ thống tự quyết vị trí cửa sổ nên bong bóng có thể không nằm sát mép (X11 thì bình thường). Bản AppImage chạy với `--no-sandbox` vì Ubuntu 23.10+ chặn sandbox của Chromium trong AppImage; bản .deb giữ sandbox nên nên dùng .deb. Bản macOS cập nhật bằng cách tải .dmg mới (app chưa được Apple ký không tự cập nhật được). Không có bản iOS: iPhone không cho app nào nổi đè lên app khác.
 
 Chuột phải vào bong bóng để đổi giao diện, màu, âm báo, chế độ ngủ, đăng xuất. Mọi thứ khác nằm ở biểu tượng khay hệ thống.
 
@@ -100,7 +108,6 @@ PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN **không** 
 - Chỉ kêu khi bị tag
 - Phím tắt chụp màn hình hoặc vùng Excel thành ảnh, dán thẳng vào chat đang mở
 - Phím tắt toàn cục + ô tìm nhanh tài khoản
-- Bản macOS và Linux
 - Ký số (SignPath)
 
 ## Đóng góp

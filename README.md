@@ -12,7 +12,7 @@ Several accounts at once · cat & dog bubbles · hidden from screen sharing · n
 
 <img src="docs/demo.gif" width="760" alt="Bubbles for Zalo, WhatsApp and Discord floating over a spreadsheet; a message arrives, the cat bubble jumps, hovering shows a preview, clicking opens the chat" />
 
-### [⬇ Download for Windows](https://github.com/submit69/chatlings/releases/latest) · [Website & 30-second video](https://chatlings.submit69.com)
+### [⬇ Download for Windows, macOS, Linux](https://github.com/submit69/chatlings/releases/latest) · [Website & 30-second video](https://chatlings.submit69.com)
 
 </div>
 
@@ -68,9 +68,17 @@ Hardware acceleration is **off** by default because it saves ~50 MB (GPU process
 
 ## Install
 
-1. Download `Chatlings-Setup-x.y.z.exe` (installer, auto-updates) or `Chatlings-x.y.z-portable.exe` from [Releases](https://github.com/submit69/chatlings/releases/latest).
-2. The exe is not code-signed yet, so Windows SmartScreen will warn. Click **More info → Run anyway**. You can read every line of the source before you do.
-3. Pick an app, sign in on its own page (scan the QR for Zalo / WhatsApp / Telegram). Done.
+From [Releases](https://github.com/submit69/chatlings/releases/latest). The files are not code-signed yet, so your system asks once; you can read every line of the source first.
+
+| | File | First start |
+|---|---|---|
+| **Windows 10/11** | `Chatlings-Setup-x.y.z.exe` (updates itself) or `…-portable.exe` | SmartScreen: **More info → Run anyway** |
+| **macOS 11+** | `Chatlings-x.y.z-mac-arm64.dmg` (Apple M chips) or `…-mac-x64.dmg` (Intel) | Drag to Applications, **right-click → Open**. If blocked: System Settings → Privacy & Security → **Open Anyway** |
+| **Linux** (Ubuntu, Debian…) | `chatlings_x.y.z_amd64.deb`, or `Chatlings-x.y.z-x86_64.AppImage` (updates itself) | `sudo apt install ./chatlings_*.deb`, or `chmod +x` the AppImage and run it |
+
+Then pick an app and sign in on its own page (scan the QR for Zalo / WhatsApp / Telegram). Done.
+
+**Differences by OS.** Hiding from screen sharing works on Windows and macOS only (Linux has no such API); hiding while presenting is Windows only. On Linux the transparent margin around the bubbles catches clicks (no click-through forwarding there), and under Wayland the system decides where windows go, so the bubbles may not sit exactly on the edge (X11 is fine). The AppImage runs with `--no-sandbox` because Ubuntu 23.10+ blocks Chromium's sandbox inside AppImages; the .deb keeps the sandbox, so prefer it. macOS builds update by downloading the new .dmg (apps not signed by Apple cannot update themselves). There is no iOS version: iPhones do not let apps float over other apps.
 
 Right-click a bubble for skin, colour, sound, sleep mode, sign out. The tray icon has everything else.
 
@@ -100,7 +108,6 @@ The PIN only stops people using your PC from opening your chats. It does **not**
 - Ring only when you are @mentioned
 - Shortcut: snip the screen or an Excel range as an image, paste into the open chat
 - Global shortcut + quick search across accounts
-- macOS and Linux builds
 - Code signing (SignPath)
 
 ## Contributing
