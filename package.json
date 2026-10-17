@@ -1,7 +1,7 @@
 {
   "name": "chatlings",
   "productName": "Chatlings",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Floating chat heads for every web chat app on your desktop. Multi-account, no telemetry.",
   "main": "src/main/main.js",
   "author": "submit69",
