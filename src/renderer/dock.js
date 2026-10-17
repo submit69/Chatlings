@@ -218,8 +218,13 @@
       try {
         r.setPointerCapture(e.pointerId);
       } catch {}
-      start = { sx: e.screenX, sy: e.screenY, bounds: null, moved: false };
-      start.boundsP = bb.invoke('dock:dragStart').then((b) => (start && (start.bounds = b)));
+      const s0 = (start = { sx: e.screenX, sy: e.screenY, bounds: null, moved: false, dx: 0, dy: 0 });
+      // The window position arrives asynchronously; moves made before it are
+      // not lost: the latest one is applied as soon as it is known.
+      s0.boundsP = bb.invoke('dock:dragStart').then((b) => {
+        s0.bounds = b;
+        if (s0.moved && b) bb.send('dock:dragMove', { x: b.x + s0.dx, y: b.y + s0.dy });
+      });
     });
     r.addEventListener('pointermove', (e) => {
       if (!start) return;
@@ -231,6 +236,8 @@
         r.classList.add('dragging');
         hidePreview(true);
       }
+      start.dx = dx;
+      start.dy = dy;
       if (start.moved && start.bounds) bb.send('dock:dragMove', { x: start.bounds.x + dx, y: start.bounds.y + dy });
     });
     const end = async (e) => {
@@ -238,6 +245,8 @@
       const s = start;
       start = null;
       await s.boundsP;
+      // a quick flick may end before any move was applied
+      if (s.moved && s.bounds) bb.send('dock:dragMove', { x: s.bounds.x + s.dx, y: s.bounds.y + s.dy });
       try {
         if (e && e.pointerId !== undefined && r.hasPointerCapture(e.pointerId)) r.releasePointerCapture(e.pointerId);
       } catch {}
