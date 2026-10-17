@@ -3,7 +3,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 const SEND = new Set([
-  'dock:hover', 'dock:click', 'dock:context', 'dock:dragMove', 'dock:dragEnd', 'dock:size', 'dock:previewClick', 'dock:hubContext',
+  'dock:hover', 'dock:click', 'dock:context', 'dock:dragMove', 'dock:dragEnd', 'dock:size', 'dock:previewClick', 'dock:hubContext', 'dock:dismiss',
   'bar:pin', 'bar:close', 'bar:reload', 'bar:menu', 'bar:full', 'bar:min', 'bar:max',
   'side:select', 'side:add', 'side:settings', 'side:context',
   'win:close',

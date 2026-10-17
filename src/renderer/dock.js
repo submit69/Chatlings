@@ -48,6 +48,17 @@
       el('div', { class: 'hearts' }, el('span', { text: '♥' }), el('span', { text: '♥' }), el('span', { text: '♥' })),
     );
     const n = { root, face: root.querySelector('.face'), key, skinKey: null };
+    if (key !== '__add') {
+      // × on hover: hide this bubble until its next message (hub: hide all).
+      const close = el('button', { class: 'close', type: 'button', title: t(key === '__hub' ? 'dock.dismissAll' : 'dock.dismiss'), text: '×' });
+      close.addEventListener('pointerdown', (e) => e.stopPropagation());
+      close.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hidePreview(true);
+        bb.send('dock:dismiss', { id: key });
+      });
+      root.append(close);
+    }
     wire(n);
     return n;
   }
@@ -203,7 +214,7 @@
       leaveSoon();
     });
     r.addEventListener('pointerdown', async (e) => {
-      if (e.button !== 0) return;
+      if (e.button !== 0 || e.target.closest('.close')) return;
       try {
         r.setPointerCapture(e.pointerId);
       } catch {}

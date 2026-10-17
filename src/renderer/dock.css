@@ -138,6 +138,35 @@ body.edge-left #column {
   }
 }
 
+/* × to hide a bubble, shown on hover (top-left; the badge is top-right) */
+.bubble .close {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #334155;
+  color: #fff;
+  font: 700 13px/14px 'Segoe UI', system-ui, sans-serif;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+.bubble .close:hover {
+  background: #ef4444;
+}
+.bubble.hover:not(.dragging) .close {
+  display: block;
+}
+.bubble.hover .zzz {
+  display: none;
+}
+
 /* Service glyph in the corner */
 .bubble .app {
   position: absolute;

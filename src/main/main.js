@@ -173,7 +173,7 @@ function start() {
           iconColor: ad.color,
           avatar: st.profile && st.profile.avatarData ? st.profile.avatarData : null,
           profileName: st.profile ? st.profile.name : null,
-          visible: !a.hidden && mode.visible,
+          visible: !a.hidden && mode.visible && !st.dismissed,
           muted: mode.muted,
           count: locked ? null : st.count,
           dot: st.dot,
@@ -241,6 +241,7 @@ function start() {
   function openAccount(id, anchorTop) {
     const account = store.account(id);
     if (!account) return;
+    accounts.state(id).dismissed = false;
     // The full window is open (maybe minimised or behind Excel): bring it back.
     if (popup.isFullOpen()) return openFull(id);
     if (popup.isVisible() && popup.currentId() === id) {
@@ -292,6 +293,8 @@ function start() {
 
   function setSetting(key, value) {
     store.setSetting(key, value);
+    // "Show bubbles" also brings back the ones closed with ×.
+    if (key === 'hideAll' && !value) for (const a of store.accounts()) accounts.state(a.id).dismissed = false;
     switch (key) {
       case 'contentProtection':
         privacy.applyAll();
@@ -491,6 +494,16 @@ function start() {
     if (!fromDock(e) || !d) return;
     const m = d.id === '__hub' || d.id === '__add' ? hubMenu() : accountMenu(String(d.id));
     if (m) m.popup({ window: dock.win });
+  });
+  ipcMain.on('dock:dismiss', (e, d) => {
+    if (!fromDock(e) || !d) return;
+    const ids = d.id === '__hub' ? store.accounts().map((a) => a.id) : [String(d.id)];
+    for (const id of ids) {
+      if (!store.account(id)) continue;
+      accounts.state(id).dismissed = true;
+      if (popup.mode() === 'compact' && popup.currentId() === id) popup.hide();
+    }
+    pushState();
   });
   ipcMain.on('dock:hubContext', (e) => fromDock(e) && hubMenu().popup({ window: dock.win }));
   ipcMain.handle('dock:dragStart', (e) => (fromDock(e) ? dock.dragStart() : null));

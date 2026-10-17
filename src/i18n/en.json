@@ -15,6 +15,8 @@
   "dock.noMessages": "No new messages",
   "dock.unreadN": "{n} unread",
   "dock.unreadDot": "New activity",
+  "dock.dismiss": "Hide this bubble until the next message",
+  "dock.dismissAll": "Hide all bubbles until the next message",
   "dock.expand": "Show all accounts",
   "dock.collapse": "Collapse",
 
@@ -34,6 +36,7 @@
   "tray.addAccount": "Add account…",
   "tray.showBubbles": "Show bubbles",
   "tray.hideBubbles": "Hide bubbles",
+  "tray.showClosed": "Show closed bubbles again",
   "tray.merge": "Merge bubbles",
   "tray.profiles": "Profiles",
   "tray.dnd": "Do not disturb",

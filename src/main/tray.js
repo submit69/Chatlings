@@ -78,6 +78,7 @@ function createTray(ctx) {
       { type: 'separator' },
       { label: t('tray.addAccount'), click: () => ctx.addAccount() },
       { label: t('tray.showBubbles'), type: 'checkbox', checked: !s.hideAll, click: (i) => ctx.setSetting('hideAll', !i.checked) },
+      ...(ctx.store.accounts().some((a) => ctx.accounts.state(a.id).dismissed) ? [{ label: t('tray.showClosed'), click: () => ctx.setSetting('hideAll', false) }] : []),
       { label: t('tray.merge'), type: 'checkbox', checked: !!s.merged, click: (i) => ctx.setSetting('merged', i.checked) },
       {
         label: t('tray.profiles'),

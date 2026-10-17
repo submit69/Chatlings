@@ -50,6 +50,7 @@ function newRuntime() {
     lastReloadAt: 0,
     crashed: false,
     triedFallback: false,
+    dismissed: false, // bubble closed with ×; comes back with the next message
     scheduleActive: true,
   };
 }
@@ -279,6 +280,7 @@ class AccountManager extends EventEmitter {
     st.lastNewAt = now;
     st.lastActivityAt = now;
     if (!st.oldestUnreadAt) st.oldestUnreadAt = now;
+    st.dismissed = false;
     if (!this.isViewing(id)) this.emit('message', id, item);
   }
 

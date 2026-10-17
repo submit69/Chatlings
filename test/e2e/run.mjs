@@ -163,6 +163,33 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
       }, null, 9000, 'auto preview hides');
     });
 
+    await t.test('× on hover hides a bubble until its next message', async () => {
+      await until(async () => {
+        const c = globalThis.__chatlings;
+        return c.dock.win.webContents.executeJavaScript(`document.getElementById('preview').hidden`);
+      }, null, 12000, 'previews gone');
+      const id = await ev(() => globalThis.__chatlings.store.accounts()[1].id);
+      const shown = await ev(async () =>
+        globalThis.__chatlings.dock.win.webContents.executeJavaScript(`(() => {
+          const b = document.querySelectorAll('.bubble')[1];
+          b.dispatchEvent(new PointerEvent('pointerenter'));
+          const d = getComputedStyle(b.querySelector('.close')).display;
+          b.querySelector('.close').click();
+          return d;
+        })()`),
+      );
+      assert.equal(shown, 'block', 'x shows on hover');
+      await wait(400);
+      let keys = (await dockDom(ev)).map((d) => d.key);
+      assert.ok(!keys.includes(id), 'bubble gone');
+      assert.equal(await ev(() => globalThis.__chatlings.popup.isVisible()), false, 'did not open the chat');
+      await fakeAdd(ev, 1, 1);
+      await until(async (_e, id) => {
+        const c = globalThis.__chatlings;
+        return c.dock.win.webContents.executeJavaScript(`[...document.querySelectorAll('.bubble')].some(b => b.dataset.key === ${JSON.stringify(id)})`);
+      }, id, 6000, 'bubble back after a new message');
+    });
+
     await t.test('drag the dock across the screen snaps it to the other edge', async () => {
       const before = await ev(() => globalThis.__chatlings.store.data.dock.edge);
       const p = await bubbleXY(ev, 0);
@@ -189,7 +216,11 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
         await wait(400);
         let dom = await dockDom(ev);
         assert.deepEqual(dom.map((d) => d.key), ['__hub']);
-        assert.equal(dom[0].badge, '4', 'hub shows the total');
+        const total = await ev(() => {
+          const c = globalThis.__chatlings;
+          return c.store.accounts().reduce((n, a) => n + Math.max(0, c.accounts.state(a.id).count || 0), 0);
+        });
+        assert.equal(dom[0].badge, String(total), 'hub shows the total');
         await click(ev, 0);
         await wait(300);
         dom = await dockDom(ev);

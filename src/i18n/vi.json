@@ -15,6 +15,8 @@
   "dock.noMessages": "Không có tin mới",
   "dock.unreadN": "{n} tin chưa đọc",
   "dock.unreadDot": "Có hoạt động mới",
+  "dock.dismiss": "Ẩn bong bóng này đến khi có tin mới",
+  "dock.dismissAll": "Ẩn tất cả bong bóng đến khi có tin mới",
   "dock.expand": "Hiện mọi tài khoản",
   "dock.collapse": "Thu gọn",
 
@@ -34,6 +36,7 @@
   "tray.addAccount": "Thêm tài khoản…",
   "tray.showBubbles": "Hiện bong bóng",
   "tray.hideBubbles": "Ẩn bong bóng",
+  "tray.showClosed": "Hiện lại bong bóng đã đóng",
   "tray.merge": "Gộp bong bóng",
   "tray.profiles": "Nhóm hồ sơ",
   "tray.dnd": "Không làm phiền",
