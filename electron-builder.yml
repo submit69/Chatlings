@@ -24,12 +24,25 @@ win:
     - target: portable
       arch: [x64]
   artifactName: Chatlings-${version}-${arch}-${os}.${ext}
+# Smaller download; the build takes a bit longer.
+compression: maximum
 nsis:
   oneClick: false
-  perMachine: false
+  perMachine: false # per-user install, no admin rights needed
   allowToChangeInstallationDirectory: true
-  createDesktopShortcut: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
   shortcutName: Chatlings
+  runAfterFinish: true
+  license: LICENSE
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  uninstallDisplayName: Chatlings
+  # Language picker in the installer; English and Vietnamese
+  multiLanguageInstaller: true
+  installerLanguages: [en_US, vi_VN]
+  # Uninstalling keeps your logins unless you delete %APPDATA%Chatlings yourself
+  deleteAppDataOnUninstall: false
   artifactName: Chatlings-Setup-${version}.${ext}
 portable:
   artifactName: Chatlings-${version}-portable.${ext}
