@@ -143,3 +143,28 @@ test('every i18n key used in the source exists', () => {
   const missing = [...used].filter((k) => !k.endsWith('.') && !/\.(html|png|js|css|json)$/.test(k) && !(k in en));
   assert.deepEqual(missing, []);
 });
+
+test('Zalo: unread count from the Messages tab badge (number is in the icon class)', () => {
+  const z = registry.get('zalo');
+  // Minimal stand-in for the markup seen on chat.zalo.me (2026-10-17).
+  const box = (tabIcon, glyph) => ({
+    querySelector: (sel) => {
+      if (sel === z.selectors.messagesIcon) return tabIcon === 'Message' ? {} : null;
+      if (sel === z.selectors.badgeContent) return glyph ? { className: `fa ${glyph} z-noti-badge__content`, textContent: '' } : null;
+      return null;
+    },
+  });
+  const run = (boxes) => {
+    global.document = { querySelectorAll: () => boxes };
+    try {
+      return new Function('return (' + z.unreadFromDom.toString() + ')')()(z.selectors);
+    } finally {
+      delete global.document;
+    }
+  };
+  assert.equal(run([box('Message', 'fa-5_24_Line'), box('Contact', 'fa-2_24_Line')]), 5, 'Messages tab only, not Contacts');
+  assert.equal(run([box('Contact', 'fa-1_24_Line'), box('Message', 'fa-12_24_Line')]), 12);
+  assert.equal(run([box('Message', 'fa-9plus_24_Line')]), 9);
+  assert.equal(run([box('Message', null)]), 0, 'no badge = read');
+  assert.equal(run([]), null, 'not loaded / logged out = unknown');
+});

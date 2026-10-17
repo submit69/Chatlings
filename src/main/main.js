@@ -452,7 +452,9 @@ function start() {
     return Menu.buildFromTemplate([
       { label: t('tray.addAccount'), click: addAccount },
       { label: t('tray.merge'), type: 'checkbox', checked: !!s.merged, click: (i) => setSetting('merged', i.checked) },
-      { label: t('tray.hideBubbles'), click: () => setSetting('hideAll', true) },
+      // Not the permanent "hide bubbles" switch (that one lives in the tray):
+      // from here it is easy to hit by mistake, so bubbles come back with the next message.
+      { label: t('dock.dismissAll'), click: () => dismiss(store.accounts().map((a) => a.id)) },
       { label: t('tray.settings'), click: () => openSettings() },
     ]);
   }
@@ -497,15 +499,18 @@ function start() {
     const m = d.id === '__hub' || d.id === '__add' ? hubMenu() : accountMenu(String(d.id));
     if (m) m.popup({ window: dock.win });
   });
-  ipcMain.on('dock:dismiss', (e, d) => {
-    if (!fromDock(e) || !d) return;
-    const ids = d.id === '__hub' ? store.accounts().map((a) => a.id) : [String(d.id)];
+  /** × on a bubble: hide it until its next message. */
+  function dismiss(ids) {
     for (const id of ids) {
       if (!store.account(id)) continue;
       accounts.state(id).dismissed = true;
       if (popup.mode() === 'compact' && popup.currentId() === id) popup.hide();
     }
     pushState();
+  }
+  ipcMain.on('dock:dismiss', (e, d) => {
+    if (!fromDock(e) || !d) return;
+    dismiss(d.id === '__hub' ? store.accounts().map((a) => a.id) : [String(d.id)]);
   });
   ipcMain.on('dock:hubContext', (e) => fromDock(e) && hubMenu().popup({ window: dock.win }));
   ipcMain.handle('dock:dragStart', (e) => (fromDock(e) ? dock.dragStart() : null));
