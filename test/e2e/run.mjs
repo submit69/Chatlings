@@ -199,13 +199,32 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
         return c.dock.win.webContents.executeJavaScript(`document.getElementById('preview').hidden`);
       }, null, 12000, 'previews gone');
       const before = await ev(() => globalThis.__chatlings.store.data.dock.edge);
-      const p = await bubbleXY(ev, 0);
+      // Pointer events dispatched in the page: the dock's real drag code runs
+      // (renderer → dragStart/dragMove/dragEnd in main), but the OS cursor of a
+      // CI machine cannot interfere the way it does with injected mouse input.
       const dir = before === 'right' ? -1 : 1;
-      const steps = [{ type: 'mouseMove', ...p }, { type: 'mouseDown', ...p, wait: 150 }];
-      for (let k = 1; k <= 12; k++) steps.push({ type: 'mouseMove', ...p, dx: dir * k * 90 });
-      steps.push({ type: 'mouseUp', ...p, dx: dir * 12 * 90, wait: 500 });
-      await dockMouse(ev, steps);
-      const after = await until(() => globalThis.__chatlings.store.data.dock.edge, null, 3000);
+      await ev(async (_e, dir) => {
+        const c = globalThis.__chatlings;
+        const b = c.dock.win.getBounds();
+        await c.dock.win.webContents.executeJavaScript(`(async () => {
+          const bubble = document.querySelectorAll('.bubble')[0];
+          const r = bubble.getBoundingClientRect();
+          const sx = ${b.x} + r.left + r.width / 2;
+          const sy = ${b.y} + r.top + r.height / 2;
+          const ev = (type, dx) => bubble.dispatchEvent(new PointerEvent(type, { bubbles: true, pointerId: 1, button: 0, buttons: type === 'pointerup' ? 0 : 1, screenX: sx + dx, screenY: sy }));
+          const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+          ev('pointerdown', 0);
+          for (let k = 1; k <= 12; k++) {
+            ev('pointermove', ${dir} * k * 90);
+            await wait(30);
+          }
+          ev('pointerup', ${dir} * 12 * 90);
+        })()`);
+      }, dir);
+      const after = await until((_e, before) => {
+        const e = globalThis.__chatlings.store.data.dock.edge;
+        return e !== before && e;
+      }, before, 4000, 'dock snapped to the other edge');
       assert.notEqual(after, before);
       const ok = await ev(({ screen }) => {
         const c = globalThis.__chatlings;
