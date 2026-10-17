@@ -4,7 +4,8 @@
 const crypto = require('crypto');
 
 const MAX_TRIES = 5;
-const COOLDOWN_MS = 30 * 1000;
+const COOLDOWN_MS = 30 * 1000; // first wait; doubles after every lockout
+const MAX_COOLDOWN_MS = 15 * 60 * 1000;
 const SCRYPT = { N: 16384, r: 8, p: 1 };
 
 function validPin(pin) {
@@ -25,7 +26,12 @@ function verifyPin(pin, rec) {
 
 // --- attempt limiting (pure) ---
 function newAttempts() {
-  return { fails: 0, until: 0 };
+  return { fails: 0, until: 0, lockouts: 0 };
+}
+
+/** Wait after the n-th lockout: 30 s, 1 min, 2 min, … up to 15 min. */
+function cooldownFor(lockouts) {
+  return Math.min(MAX_COOLDOWN_MS, COOLDOWN_MS * 2 ** Math.max(0, lockouts - 1));
 }
 
 function canTry(st, now) {
@@ -33,10 +39,12 @@ function canTry(st, now) {
   return { ok: true, waitMs: 0 };
 }
 
+// Guessing a 4-digit PIN this way takes weeks instead of hours.
 function recordFailure(st, now) {
+  const lockouts = st.lockouts || 0;
   const fails = st.until && now >= st.until ? 1 : st.fails + 1;
-  if (fails >= MAX_TRIES) return { fails: 0, until: now + COOLDOWN_MS };
-  return { fails, until: 0 };
+  if (fails >= MAX_TRIES) return { fails: 0, until: now + cooldownFor(lockouts + 1), lockouts: lockouts + 1 };
+  return { fails, until: 0, lockouts };
 }
 
 function shouldAutoLock(idleSeconds, minutes) {
@@ -93,4 +101,4 @@ function createLock({ getRecord, getAutoLockMinutes, getLockOnScreenLock, powerM
   return api;
 }
 
-module.exports = { MAX_TRIES, COOLDOWN_MS, validPin, hashPin, verifyPin, newAttempts, canTry, recordFailure, shouldAutoLock, createLock };
+module.exports = { MAX_TRIES, COOLDOWN_MS, MAX_COOLDOWN_MS, cooldownFor, validPin, hashPin, verifyPin, newAttempts, canTry, recordFailure, shouldAutoLock, createLock };

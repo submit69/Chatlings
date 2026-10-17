@@ -158,6 +158,13 @@
         ),
         a.sound === 'file' && a.soundFile ? el('div', { class: 'opt small muted', text: a.soundFile }) : null,
         opt('settings.acc.muteNative', 'settings.acc.muteNativeHint', check(a.muteNative, (v) => updateAccount(id, { muteNative: v }))),
+        opt(
+          'settings.acc.media',
+          'settings.acc.mediaHint',
+          select(a.allowMedia === true ? 'allow' : a.allowMedia === false ? 'block' : 'ask', [['ask', t('perm.ask.option')], ['allow', t('perm.allow')], ['block', t('perm.block')]], (v) =>
+            updateAccount(id, { allowMedia: v === 'allow' ? true : v === 'block' ? false : null }),
+          ),
+        ),
       ),
       el('h2', { text: t('settings.acc.sleep') }),
       card(

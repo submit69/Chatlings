@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { pathToFileURL } = require('url');
 const { app, ipcMain, Menu, dialog, shell, powerMonitor, screen, BrowserWindow } = require('electron');
 
 if (process.env.CHATLINGS_USERDATA) app.setPath('userData', path.resolve(process.env.CHATLINGS_USERDATA));
@@ -284,11 +285,13 @@ function start() {
   ctx.openFull = (id) => openFull(id);
 
   function addAccount() {
+    if (lock.isLocked()) return openFull(); // shows the lock screen
     picker.openPicker({ title: t('picker.title'), protect: (w) => privacy.protect(w) });
   }
   ctx.addAccount = addAccount;
 
   function openSettings(query) {
+    if (lock.isLocked()) return openFull();
     picker.openSettings({ title: t('settings.title'), query, protect: (w) => privacy.protect(w) });
   }
   ctx.openSettings = openSettings;
@@ -342,6 +345,10 @@ function start() {
   async function accountAction(id, action) {
     const a = store.account(id);
     if (!a) return false;
+    if (lock.isLocked() && action !== 'open') {
+      openFull();
+      return false;
+    }
     switch (action) {
       case 'open':
         openAccount(id);
@@ -387,8 +394,10 @@ function start() {
     sound: (v) => SOUNDS.includes(v),
     preview: (v) => typeof v === 'boolean',
     muteNative: (v) => typeof v === 'boolean',
+    allowMedia: (v) => v === true || v === false || v === null,
   };
   function updateAccount(id, patch) {
+    if (lock.isLocked()) return null;
     const clean = {};
     for (const [k, v] of Object.entries(patch || {})) {
       if (ACCOUNT_FIELDS[k] && ACCOUNT_FIELDS[k](v)) clean[k] = k === 'name' ? v.trim() : v;
@@ -404,6 +413,7 @@ function start() {
   function accountMenu(id) {
     const a = store.account(id);
     if (!a) return null;
+    if (lock.isLocked()) return Menu.buildFromTemplate([{ label: t('menu.open'), click: () => openFull(id) }]);
     const st = accounts.state(id);
     const idx = store.accounts().indexOf(a);
     const colorNames = ['blue', 'orange', 'green', 'pink', 'purple', 'yellow', 'teal', 'red'];
@@ -449,6 +459,7 @@ function start() {
 
   function hubMenu() {
     const s = store.settings;
+    if (lock.isLocked()) return Menu.buildFromTemplate([{ label: t('tray.openApp'), click: () => openFull() }]);
     return Menu.buildFromTemplate([
       { label: t('tray.addAccount'), click: addAccount },
       { label: t('tray.merge'), type: 'checkbox', checked: !!s.merged, click: (i) => setSetting('merged', i.checked) },
@@ -478,8 +489,16 @@ function start() {
 
   // ---------- IPC ----------
   const fromDock = (e) => e.sender === dock.win.webContents;
+  // Only Chatlings' own pages (file:// under src/renderer) may use the UI
+  // channels. Chat sites have no access to them anyway (their preload exposes
+  // nothing); this is a second line of defence.
+  const RENDERER_URL = pathToFileURL(path.join(__dirname, '..', 'renderer') + path.sep).href;
+  const norm = (u) => decodeURIComponent(String(u || '')).replace(/\\/g, '/').toLowerCase();
+  const own = (e) => !!e.senderFrame && norm(e.senderFrame.url).startsWith(norm(RENDERER_URL));
+  const on = (ch, fn) => ipcMain.on(ch, (e, d) => (own(e) ? fn(e, d) : undefined));
+  const handle = (ch, fn) => ipcMain.handle(ch, (e, d) => (own(e) ? fn(e, d) : null));
 
-  ipcMain.handle('bb:init', () => ({
+  handle('bb:init', () => ({
     locale: i18n.locale(),
     dict: i18n.dict(),
     version: app.getVersion(),
@@ -488,13 +507,13 @@ function start() {
     fake: registry.isFake(),
   }));
 
-  ipcMain.on('dock:hover', (e, on) => fromDock(e) && dock.setHover(!!on));
-  ipcMain.on('dock:click', (e, d) => {
+  on('dock:hover', (e, on) => fromDock(e) && dock.setHover(!!on));
+  on('dock:click', (e, d) => {
     if (!fromDock(e) || !d) return;
     if (d.id === '__add') addAccount();
     else openAccount(String(d.id), Number(d.top) || 0);
   });
-  ipcMain.on('dock:context', (e, d) => {
+  on('dock:context', (e, d) => {
     if (!fromDock(e) || !d) return;
     const m = d.id === '__hub' || d.id === '__add' ? hubMenu() : accountMenu(String(d.id));
     if (m) m.popup({ window: dock.win });
@@ -508,53 +527,53 @@ function start() {
     }
     pushState();
   }
-  ipcMain.on('dock:dismiss', (e, d) => {
+  on('dock:dismiss', (e, d) => {
     if (!fromDock(e) || !d) return;
     dismiss(d.id === '__hub' ? store.accounts().map((a) => a.id) : [String(d.id)]);
   });
-  ipcMain.on('dock:hubContext', (e) => fromDock(e) && hubMenu().popup({ window: dock.win }));
-  ipcMain.handle('dock:dragStart', (e) => (fromDock(e) ? dock.dragStart() : null));
-  ipcMain.on('dock:dragMove', (e, p) => {
+  on('dock:hubContext', (e) => fromDock(e) && hubMenu().popup({ window: dock.win }));
+  handle('dock:dragStart', (e) => (fromDock(e) ? dock.dragStart() : null));
+  on('dock:dragMove', (e, p) => {
     if (!fromDock(e) || !p) return;
     if (popup.isVisible() && popup.mode() === 'compact' && !store.settings.popupPinned) popup.hide();
     dock.dragMove(p);
   });
-  ipcMain.on('dock:dragEnd', (e) => fromDock(e) && dock.dragEnd());
-  ipcMain.on('dock:size', (e, s) => {
+  on('dock:dragEnd', (e) => fromDock(e) && dock.dragEnd());
+  on('dock:size', (e, s) => {
     if (!fromDock(e) || !s) return;
     dock.setSize({ count: Math.max(1, s.count | 0), previewHeight: Math.max(0, s.previewHeight | 0), previewIndex: Math.max(0, s.previewIndex | 0) });
   });
-  ipcMain.handle('dock:preview', (e, id) => (fromDock(e) ? previewFor(String(id)) : null));
-  ipcMain.on('dock:previewClick', (e, d) => {
+  handle('dock:preview', (e, id) => (fromDock(e) ? previewFor(String(id)) : null));
+  on('dock:previewClick', (e, d) => {
     if (!fromDock(e) || !d) return;
     openAccount(String(d.id));
     if (d.nid) accounts.clickNotification(String(d.id), String(d.nid));
   });
 
-  ipcMain.on('bar:pin', () => setSetting('popupPinned', !store.settings.popupPinned));
-  ipcMain.on('bar:close', () => popup.hide());
-  ipcMain.on('bar:min', () => popup.minimize());
-  ipcMain.on('bar:max', () => popup.toggleMaximize());
-  ipcMain.on('bar:full', () => openFull(popup.currentId()));
-  ipcMain.on('side:select', (_e, id) => openFull(String(id)));
-  ipcMain.on('side:add', () => addAccount());
-  ipcMain.on('side:settings', () => openSettings());
-  ipcMain.on('side:context', (_e, id) => {
+  on('bar:pin', () => setSetting('popupPinned', !store.settings.popupPinned));
+  on('bar:close', () => popup.hide());
+  on('bar:min', () => popup.minimize());
+  on('bar:max', () => popup.toggleMaximize());
+  on('bar:full', () => openFull(popup.currentId()));
+  on('side:select', (_e, id) => openFull(String(id)));
+  on('side:add', () => addAccount());
+  on('side:settings', () => openSettings());
+  on('side:context', (_e, id) => {
     const m = accountMenu(String(id));
     if (m) m.popup();
   });
-  ipcMain.on('bar:reload', () => popup.currentId() && accounts.reload(popup.currentId()));
-  ipcMain.on('bar:menu', () => {
+  on('bar:reload', () => popup.currentId() && accounts.reload(popup.currentId()));
+  on('bar:menu', () => {
     const m = popup.currentId() && accountMenu(popup.currentId());
     if (m) m.popup();
   });
-  ipcMain.on('win:close', (e) => {
+  on('win:close', (e) => {
     const w = BrowserWindow.fromWebContents(e.sender);
     if (w) w.close();
   });
 
-  ipcMain.handle('picker:add', (_e, d) => {
-    if (!d || !d.adapter) return { ok: false };
+  handle('picker:add', (_e, d) => {
+    if (!d || !d.adapter || lock.isLocked()) return { ok: false };
     const ad = registry.get(d.adapter);
     const opts = {};
     if (ad.id === 'custom') {
@@ -575,7 +594,7 @@ function start() {
     return { ok: true, id: acc.id };
   });
 
-  ipcMain.handle('lock:unlock', (_e, pin) => lock.unlock(String(pin || '')));
+  handle('lock:unlock', (_e, pin) => lock.unlock(String(pin || '')));
 
   function settingsPayload() {
     const { pin, ...settings } = store.settings;
@@ -600,9 +619,9 @@ function start() {
     };
   }
   const SETTING_KEYS = ['locale', 'merged', 'hideAll', 'contentProtection', 'hideOnPresentation', 'previews', 'autoLaunch', 'checkUpdates', 'autoLockMinutes', 'lockOnScreenLock', 'memThresholdMB', 'spellcheck', 'popupPinned', 'hardwareAcceleration', 'autoPeek'];
-  ipcMain.handle('settings:get', () => settingsPayload());
-  ipcMain.handle('settings:set', (_e, d) => {
-    if (!d) return false;
+  handle('settings:get', () => settingsPayload());
+  handle('settings:set', (_e, d) => {
+    if (!d || lock.isLocked()) return false;
     const g = /^group:(w+)$/.exec(d.key);
     if (g && g[1] in store.data.groups) return ctx.setGroup(g[1], !!d.value), true;
     if (d.key === 'dnd') {
@@ -613,36 +632,38 @@ function start() {
     setSetting(d.key, d.value);
     return true;
   });
-  ipcMain.handle('account:update', (_e, d) => !!(d && updateAccount(String(d.id), d.patch)));
-  ipcMain.handle('account:action', (_e, d) => d && accountAction(String(d.id), String(d.action)));
-  ipcMain.handle('account:move', (_e, d) => {
-    if (!d) return false;
+  handle('account:update', (_e, d) => !!(d && updateAccount(String(d.id), d.patch)));
+  handle('account:action', (_e, d) => d && accountAction(String(d.id), String(d.action)));
+  handle('account:move', (_e, d) => {
+    if (!d || lock.isLocked()) return false;
     store.moveAccount(String(d.id), d.to | 0);
     pushState();
     return true;
   });
-  ipcMain.handle('pin:set', (_e, d) => {
+  handle('pin:set', (_e, d) => {
+    if (lock.isLocked()) return { ok: false, error: t('lock.title') };
     if (!d || !validPin(d.pin)) return { ok: false, error: t('lock.invalid') };
     if (store.settings.pin && !verifyPin(String(d.oldPin || ''), store.settings.pin)) return { ok: false, error: t('lock.wrongOld') };
     store.setSetting('pin', hashPin(String(d.pin)));
     pushState();
     return { ok: true };
   });
-  ipcMain.handle('pin:clear', (_e, d) => {
+  handle('pin:clear', (_e, d) => {
+    if (lock.isLocked()) return { ok: false, error: t('lock.title') };
     if (store.settings.pin && !verifyPin(String((d && d.oldPin) || ''), store.settings.pin)) return { ok: false, error: t('lock.wrongOld') };
     store.setSetting('pin', null);
     popup.unlocked();
     pushState();
     return { ok: true };
   });
-  ipcMain.handle('mem:sample', () => memory.sample());
-  ipcMain.handle('sound:pickFile', (_e, id) => pickSoundFile(String(id)));
-  ipcMain.handle('sound:test', (_e, id) => {
+  handle('mem:sample', () => memory.sample());
+  handle('sound:pickFile', (_e, id) => (lock.isLocked() ? null : pickSoundFile(String(id))));
+  handle('sound:test', (_e, id) => {
     const a = store.account(String(id));
     return a ? sound.test(a) : false;
   });
-  ipcMain.handle('updates:check', () => updater.check({ interactive: true }));
-  ipcMain.handle('app:openExternal', (_e, url) => {
+  handle('updates:check', () => updater.check({ interactive: true }));
+  handle('app:openExternal', (_e, url) => {
     const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/)/i.test(String(url));
     if (ok) shell.openExternal(String(url));
     return ok;
@@ -711,7 +732,7 @@ function start() {
   }
 
   // Test hooks: only with fake chats, or for scripts/check-adapters.mjs.
-  if (registry.isFake() || process.env.CHATLINGS_EXPOSE === '1') {
+  if (!app.isPackaged && (registry.isFake() || process.env.CHATLINGS_EXPOSE === '1')) {
     ctx.lib = { layout, hashPin, newAccount, registry };
     globalThis.__chatlings = ctx;
   }

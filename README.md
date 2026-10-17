@@ -84,7 +84,7 @@ Right-click a bubble for skin, colour, sound, sleep mode, sign out. The tray ico
 
 ## Privacy
 
-**No telemetry, no analytics, no Chatlings server.** Chatlings only connects to the chat sites you add and, once a day, to this project's GitHub Releases to look for updates (can be turned off). Logins stay in your Windows profile. Details: [PRIVACY.md](PRIVACY.md).
+**No telemetry, no analytics, no Chatlings server.** Chatlings only connects to the chat sites you add and, once a day, to this project's GitHub Releases to look for updates (can be turned off). Logins stay in your Windows profile. Details: [PRIVACY.md](PRIVACY.md). How the app is hardened and how to report a vulnerability: [SECURITY.md](SECURITY.md).
 
 The PIN only stops people using your PC from opening your chats. It does **not** encrypt your login data.
 

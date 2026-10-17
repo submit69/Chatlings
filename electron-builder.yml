@@ -14,6 +14,13 @@ files:
   - "!node_modules/@koromix/koffi-{linux,darwin,freebsd,openbsd,musl}*/**"
   - "!node_modules/koffi/vendor/**"
   - "!node_modules/koffi/doc/**"
+# Lock the packaged app: nobody can start it as plain Node (ELECTRON_RUN_AS_NODE),
+# pass NODE_OPTIONS, or attach a debugger with --inspect to read live sessions.
+electronFuses:
+  runAsNode: false
+  enableNodeOptionsEnvironmentVariable: false
+  enableNodeCliInspectArguments: false
+  resetAdHocDarwinSignature: true
 asarUnpack:
   - "**/*.node"
 win:

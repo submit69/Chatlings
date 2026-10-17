@@ -125,7 +125,8 @@
     deb: (n) => /\.deb$/i.test(n),
   };
   // Macs: Apple silicon is the default today; Intel is one link below.
-  const primary = { win: 'win', mac: 'mac-arm64', linux: 'appimage' }[os];
+  // Linux: the .deb keeps Chromium's sandbox (the AppImage has to run without it).
+  const primary = { win: 'win', mac: 'mac-arm64', linux: 'deb' }[os];
   if (os !== 'win') {
     for (const el of document.querySelectorAll('.dl-label')) el.dataset.i18n = os === 'mac' ? 'dl.mac' : 'dl.linux';
     VI['dl.mac'] = 'Tải cho macOS';

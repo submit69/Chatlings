@@ -374,6 +374,40 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
       });
     });
 
+    await t.test('security: locked app refuses changes; chat pages get no app API, no mic in the background', async () => {
+      const r = await ev(async ({ BrowserWindow }) => {
+        const c = globalThis.__chatlings;
+        const id = c.store.accounts()[0].id;
+        const out = {};
+        // a chat page cannot see the app's own bridge
+        out.bridgeInChat = await c.accounts.state(id).view.webContents.executeJavaScript('typeof window.bb');
+        // microphone asked by an account that is not on screen: refused without a prompt
+        c.popup.hide();
+        out.micInBackground = await new Promise((res) => c.accounts.askSensitive(id, 'media', { mediaTypes: ['audio'] }, res));
+        // locked: no settings window, no removing accounts, no setting changes
+        c.store.setSetting('pin', c.lib.hashPin('2580'));
+        c.lock.lock();
+        const before = BrowserWindow.getAllWindows().length;
+        c.openSettings();
+        await new Promise((res) => setTimeout(res, 500));
+        out.settingsOpened = BrowserWindow.getAllWindows().some((w) => /settings\.html/.test(w.webContents.getURL()));
+        out.windowsAdded = BrowserWindow.getAllWindows().length - before;
+        out.removeWhileLocked = await c.dock.win.webContents.executeJavaScript(`bb.invoke('account:action', { id: ${JSON.stringify(id)}, action: 'remove' })`);
+        out.stillThere = !!c.store.account(id);
+        out.settingWhileLocked = await c.dock.win.webContents.executeJavaScript(`bb.invoke('settings:set', { key: 'merged', value: true })`);
+        c.lock.unlock('2580');
+        c.store.setSetting('pin', null);
+        c.popup.hide();
+        return out;
+      });
+      assert.equal(r.bridgeInChat, 'undefined');
+      assert.equal(r.micInBackground, false);
+      assert.equal(r.settingsOpened, false, 'settings window does not open while locked');
+      assert.equal(r.removeWhileLocked, false);
+      assert.equal(r.stillThere, true);
+      assert.equal(r.settingWhileLocked, false);
+    });
+
     await t.test('working hours: outside → hide or mute', async () => {
       const r = await ev(() => {
         const c = globalThis.__chatlings;

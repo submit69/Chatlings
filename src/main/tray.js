@@ -50,6 +50,12 @@ function createTray(ctx) {
   }
 
   function build() {
+    if (ctx.lock.isLocked()) {
+      tray.setContextMenu(Menu.buildFromTemplate([{ label: t('tray.openApp'), click: () => ctx.openFull() }, { type: 'separator' }, { label: t('tray.quit'), click: () => app.quit() }]));
+      tray.setImage(icons.normal);
+      tray.setToolTip('Chatlings');
+      return;
+    }
     const s = ctx.store.settings;
     const groups = ctx.store.data.groups;
     const dndOn = ctx.store.data.dndUntil > Date.now();

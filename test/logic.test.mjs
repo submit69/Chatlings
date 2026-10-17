@@ -208,6 +208,22 @@ test('5 wrong PINs → 30 s wait, then tries reset', () => {
   assert.equal(st.fails, 1, 'counter restarts after the wait');
 });
 
+test('each lockout doubles the wait, up to 15 minutes', () => {
+  assert.equal(lock.cooldownFor(1), 30_000);
+  assert.equal(lock.cooldownFor(2), 60_000);
+  assert.equal(lock.cooldownFor(3), 120_000);
+  assert.equal(lock.cooldownFor(20), lock.MAX_COOLDOWN_MS);
+  let st = lock.newAttempts();
+  let t = 0;
+  const lockOut = () => {
+    for (let i = 0; i < lock.MAX_TRIES; i++) st = lock.recordFailure(st, t);
+    return st.until - t;
+  };
+  assert.equal(lockOut(), 30_000);
+  t = st.until;
+  assert.equal(lockOut(), 60_000, 'second lockout waits longer');
+});
+
 test('createLock: unlock flow and lockout', () => {
   const rec = lock.hashPin('1357');
   const changes = [];

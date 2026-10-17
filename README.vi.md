@@ -84,7 +84,7 @@ Chuột phải vào bong bóng để đổi giao diện, màu, âm báo, chế �
 
 ## Riêng tư
 
-**Không telemetry, không analytics, không có máy chủ Chatlings.** Chatlings chỉ kết nối tới các trang chat bạn thêm và, mỗi ngày một lần, tới GitHub Releases của dự án này để xem có bản mới (tắt được). Đăng nhập nằm trong hồ sơ Windows của bạn. Chi tiết: [PRIVACY.md](PRIVACY.md).
+**Không telemetry, không analytics, không có máy chủ Chatlings.** Chatlings chỉ kết nối tới các trang chat bạn thêm và, mỗi ngày một lần, tới GitHub Releases của dự án này để xem có bản mới (tắt được). Đăng nhập nằm trong hồ sơ Windows của bạn. Chi tiết: [PRIVACY.md](PRIVACY.md). Cách app được bảo vệ và cách báo lỗ hổng bảo mật: [SECURITY.md](SECURITY.md).
 
 PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN **không** mã hoá dữ liệu đăng nhập.
 

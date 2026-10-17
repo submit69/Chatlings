@@ -4,12 +4,19 @@
 // the store; everything here is lost on quit on purpose.
 const { EventEmitter } = require('events');
 const path = require('path');
-const { WebContentsView, session, shell } = require('electron');
+const { WebContentsView, session, shell, dialog, app } = require('electron');
 const registry = require('../adapters');
 const { isAllowedUrl } = require('../adapters/common');
 const { resolveUnread } = require('./unread');
 const { isActive } = require('./schedule');
 const sleep = require('./sleep');
+const { t } = require('./i18n');
+
+// Granted without asking: harmless, and every chat app needs them.
+const SILENT_PERMISSIONS = new Set(['notifications', 'clipboard-sanitized-write', 'fullscreen', 'pointerLock', 'speaker-selection']);
+// Microphone / camera / screen: only for the account you are looking at, after
+// asking (the answer can be remembered per account). Never in the background.
+const SENSITIVE_PERMISSIONS = new Set(['media', 'display-capture']);
 
 const PRELOAD = path.join(__dirname, '..', 'preload', 'chat-preload.js');
 const DOM_POLL_MS = 4000;
@@ -89,11 +96,48 @@ class AccountManager extends EventEmitter {
     if (this.sessionsReady.has(name)) return ses;
     this.sessionsReady.add(name);
     ses.setUserAgent(this.ua);
-    const allowed = new Set(['notifications', 'media', 'clipboard-sanitized-write', 'fullscreen', 'pointerLock', 'speaker-selection', 'display-capture']);
-    ses.setPermissionRequestHandler((_wc, perm, cb) => cb(allowed.has(perm)));
-    ses.setPermissionCheckHandler((_wc, perm) => allowed.has(perm));
+    const id = account.id;
+    ses.setPermissionRequestHandler((_wc, perm, cb, details) => {
+      if (SILENT_PERMISSIONS.has(perm)) return cb(true);
+      if (SENSITIVE_PERMISSIONS.has(perm)) return this.askSensitive(id, perm, details, cb);
+      cb(false);
+    });
+    ses.setPermissionCheckHandler((_wc, perm) => {
+      if (SILENT_PERMISSIONS.has(perm)) return true;
+      const a = this.store.account(id);
+      return SENSITIVE_PERMISSIONS.has(perm) && !!a && a.allowMedia === true && this.isViewing(id);
+    });
     ses.setSpellCheckerEnabled(!!this.store.settings.spellcheck);
     return ses;
+  }
+
+  /** Ask before a chat site may use the microphone, camera or screen. */
+  async askSensitive(id, perm, details, cb) {
+    const a = this.store.account(id);
+    if (!a || a.allowMedia === false) return cb(false);
+    // In the background (popup hidden, other account shown): always no.
+    if (!this.isViewing(id)) return cb(false);
+    if (a.allowMedia === true) return cb(true);
+    const kinds = perm === 'display-capture' ? [t('perm.screen')] : (details && details.mediaTypes && details.mediaTypes.length ? details.mediaTypes : ['audio']).map((k) => t(k === 'video' ? 'perm.camera' : 'perm.mic'));
+    const host = (() => {
+      try {
+        return new URL(details && details.requestingUrl).hostname;
+      } catch {
+        return '';
+      }
+    })();
+    const r = await dialog.showMessageBox(this.popup.win, {
+      type: 'question',
+      buttons: [t('perm.allow'), t('perm.block')],
+      defaultId: 1,
+      cancelId: 1,
+      message: t('perm.ask', { name: a.name, what: kinds.join(', ') }),
+      detail: host ? t('perm.detail', { host }) : undefined,
+      checkboxLabel: t('perm.remember'),
+    });
+    const allow = r.response === 0;
+    if (r.checkboxChecked) this.store.updateAccount(id, { allowMedia: allow });
+    cb(allow && this.isViewing(id));
   }
 
   // ---------- wake / sleep ----------
@@ -117,7 +161,7 @@ class AccountManager extends EventEmitter {
         spellcheck: !!this.store.settings.spellcheck,
         autoplayPolicy: 'document-user-activation-required',
         enableWebSQL: false,
-        devTools: !!process.env.CHATLINGS_DEVTOOLS,
+        devTools: !!process.env.CHATLINGS_DEVTOOLS && !app.isPackaged,
         additionalArguments: [`--bb-account=${id}`, `--bb-adapter=${r.adapter.id}`],
       },
     });
@@ -167,6 +211,13 @@ class AccountManager extends EventEmitter {
     wc.on('did-create-window', (child) => {
       child.setContentProtection(!!this.store.settings.contentProtection);
       child.webContents.setUserAgent(this.ua);
+      // Pop-ups (sign-in pages, media viewers) follow the same rules as the chat.
+      child.webContents.on('will-navigate', guard);
+      child.webContents.on('will-redirect', guard);
+      child.webContents.setWindowOpenHandler(({ url }) => {
+        if (/^https?:|^mailto:/.test(url)) shell.openExternal(url);
+        return { action: 'deny' };
+      });
     });
     const guard = (e, url) => {
       if (r.fake && url.startsWith('file:')) return;
@@ -206,7 +257,7 @@ class AccountManager extends EventEmitter {
     });
     wc.on('before-input-event', (_e, input) => {
       if (input.type === 'keyDown' && input.key === 'F5') wc.reload();
-      if (input.type === 'keyDown' && input.control && input.shift && input.key.toLowerCase() === 'i' && process.env.CHATLINGS_DEVTOOLS) wc.openDevTools({ mode: 'detach' });
+      if (input.type === 'keyDown' && input.control && input.shift && input.key.toLowerCase() === 'i' && process.env.CHATLINGS_DEVTOOLS && !app.isPackaged) wc.openDevTools({ mode: 'detach' });
     });
   }
 
