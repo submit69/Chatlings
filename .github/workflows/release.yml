@@ -23,6 +23,10 @@ jobs:
   build:
     needs: test
     runs-on: windows-latest
+    env:
+      # Code signing turns on by itself once the SignPath secret exists
+      # (see docs/code-signing.md). Without it the build is unsigned.
+      SIGN: ${{ secrets.SIGNPATH_API_TOKEN != '' && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -36,8 +40,69 @@ jobs:
         run: |
           v=$(node -p "require('./package.json').version")
           [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} != package.json v$v"; exit 1; }
+
+      # ---- unsigned ----
       - name: Build
+        if: env.SIGN != 'true'
         run: npx electron-builder --win --publish never
+
+      # ---- signed (SignPath) ----
+      # 1. sign the app files, 2. build the installer + portable from them,
+      # 3. sign those, 4. rebuild latest.yml / .blockmap from the signed installer.
+      - name: Build app files
+        if: env.SIGN == 'true'
+        run: npx electron-builder --win --dir --publish never
+      - name: Upload app files for signing
+        if: env.SIGN == 'true'
+        id: unsigned-app
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-app
+          path: dist/win-unpacked
+      - name: Sign app files
+        if: env.SIGN == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: chatlings
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: app
+          github-artifact-id: ${{ steps.unsigned-app.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-app
+      - name: Build installer and portable from the signed app
+        if: env.SIGN == 'true'
+        shell: bash
+        run: |
+          rm -rf dist/win-unpacked && mv signed-app dist/win-unpacked
+          npx electron-builder --win --prepackaged dist/win-unpacked --publish never
+      - name: Upload installers for signing
+        if: env.SIGN == 'true'
+        id: unsigned-installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installers
+          path: dist/*.exe
+      - name: Sign installers
+        if: env.SIGN == 'true'
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: chatlings
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: installers
+          github-artifact-id: ${{ steps.unsigned-installers.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-installers
+      - name: Use the signed installers, rebuild latest.yml
+        if: env.SIGN == 'true'
+        shell: bash
+        run: |
+          cp signed-installers/*.exe dist/
+          node scripts/update-latest-yml.mjs dist
+
       # One step creates the release and uploads everything. Letting
       # electron-builder publish the installer and the portable exe in parallel
       # makes both try to create the release, and the second one fails.
@@ -59,3 +124,24 @@ jobs:
           path: |
             dist/*.exe
             dist/latest.yml
+
+  # Opens the winget-pkgs PR for each new release. Needs a classic GitHub token
+  # with public_repo scope in the WINGET_TOKEN secret, and the first version
+  # (submit69.Chatlings 0.1.1) already merged into microsoft/winget-pkgs.
+  winget:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: windows-latest
+    env:
+      HAS_TOKEN: ${{ secrets.WINGET_TOKEN != '' && 'true' || 'false' }}
+    steps:
+      - name: Skip (no WINGET_TOKEN secret)
+        if: env.HAS_TOKEN != 'true'
+        run: echo "WINGET_TOKEN not set; skipping winget update."
+      - uses: vedantmgoyal9/winget-releaser@v2
+        if: env.HAS_TOKEN == 'true'
+        with:
+          identifier: submit69.Chatlings
+          installers-regex: 'Setup-.*\.exe$'
+          token: ${{ secrets.WINGET_TOKEN }}
+          fork-user: submit69

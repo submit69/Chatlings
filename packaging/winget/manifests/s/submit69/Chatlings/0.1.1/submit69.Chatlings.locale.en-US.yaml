@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.9.0.schema.json
+PackageIdentifier: submit69.Chatlings
+PackageVersion: 0.1.1
+PackageLocale: en-US
+Publisher: submit69
+PublisherUrl: https://github.com/submit69
+PublisherSupportUrl: https://github.com/submit69/Chatlings/issues
+PrivacyUrl: https://github.com/submit69/Chatlings/blob/main/PRIVACY.md
+Author: Chatlings contributors
+PackageName: Chatlings
+PackageUrl: https://github.com/submit69/Chatlings
+License: MIT
+LicenseUrl: https://github.com/submit69/Chatlings/blob/main/LICENSE
+ShortDescription: Floating chat heads for Zalo, Messenger, WhatsApp, Telegram, Discord and more, with several accounts at once.
+Description: |-
+  Chatlings puts your web chats in floating bubbles on the edge of the screen, like chat heads on a phone.
+  It runs each service's official web app in its own isolated profile, so you can use several accounts of the same app at once.
+  Bubbles show unread counts, preview new messages on hover, hide from screen sharing, and can sleep to save RAM.
+  No telemetry.
+Moniker: chatlings
+Tags:
+  - chat
+  - chat-heads
+  - discord
+  - messenger
+  - multi-account
+  - telegram
+  - whatsapp
+  - zalo
+ReleaseNotesUrl: https://github.com/submit69/Chatlings/releases/tag/v0.1.1
+ManifestType: defaultLocale
+ManifestVersion: 1.9.0

@@ -12,7 +12,7 @@ Nhiều tài khoản cùng lúc · bong bóng mèo & cún · tự ẩn khi share
 
 <img src="docs/demo.gif" width="760" alt="Bong bóng Zalo, WhatsApp, Discord nổi trên bảng tính; có tin mới thì mèo nhảy, rê chuột xem trước tin, bấm vào mở chat" />
 
-### [⬇ Tải cho Windows](https://github.com/submit69/chatlings/releases/latest)
+### [⬇ Tải cho Windows](https://github.com/submit69/chatlings/releases/latest) · [Trang giới thiệu & video 30 giây](https://chatlings.submit69.com)
 
 </div>
 

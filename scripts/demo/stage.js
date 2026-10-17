@@ -6,6 +6,15 @@
   const DOCK_URL = q.get('dock');
   const CHAT_URL = q.get('chat');
   const DICT = JSON.parse(decodeURIComponent(q.get('dict')));
+  const TIMELINE = q.get('timeline') || 'gif';
+  const LANG = q.get('lang') || 'en';
+  const W = Number(q.get('w') || 960);
+  const H = Number(q.get('h') || 560);
+  document.documentElement.style.setProperty('--W', W + 'px');
+  document.documentElement.style.setProperty('--H', H + 'px');
+  if (q.get('pw')) document.documentElement.style.setProperty('--PW', q.get('pw') + 'px');
+  if (q.get('ph')) document.documentElement.style.setProperty('--PH', q.get('ph') + 'px');
+  if (TIMELINE === 'video') document.body.classList.add('video');
   const LAYOUT = { COLUMN_W: 84, PREVIEW_W: 300, BUBBLE: 56, GAP: 12, PAD: 14 };
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const $ = (id) => document.getElementById(id);
@@ -17,7 +26,8 @@
   let html = '<colgroup>' + widths.map((w) => `<col style="width:${w}px">`).join('') + '</colgroup>';
   html += '<tr>' + cols.map((c) => `<th>${c}</th>`).join('') + '</tr>';
   html += '<tr><th>1</th><td></td><td><b>Item</b></td><td><b>Q3</b></td><td><b>Q4</b></td><td><b>Δ</b></td>' + '<td></td>'.repeat(6) + '</tr>';
-  for (let r = 0; r < 18; r++) {
+  const ROWS = Math.max(18, Math.ceil((H - 112) / 22));
+  for (let r = 0; r < ROWS; r++) {
     const it = items[r];
     const a = it ? 1200 + ((r * 7919) % 8000) : '';
     const b = it ? a + ((r * 3571) % 1400) - 500 : '';
@@ -48,6 +58,7 @@
     base({ id: 'd', name: 'Discord', color: '#10B981', skin: 'avatar', avatar: avatar('#8B5CF6'), adapter: 'discord', adapterName: 'Discord', icon: icons.discord, iconColor: '#5865F2' }),
   ];
   const previews = {
+    z: [{ nid: 'z1', title: 'Lan', body: LANG === 'vi' ? 'Anh ơi, khách hỏi báo giá Q4 ạ' : 'Hi! The client is asking for the Q4 quote', time: Date.now() }],
     d: [
       { nid: '1', title: 'Huy · #release', body: 'Build is green, shipping v0.1 tonight 🚀', time: Date.now() - 60000 },
       { nid: '2', title: 'Lan · #design', body: 'New bubble skins look so cute', time: Date.now() - 4 * 60000 },
@@ -99,7 +110,146 @@
       b.dispatchEvent(new PointerEvent(on ? 'pointerenter' : 'pointerleave'));
     });
 
+  const inDockEmit = (ch, data) => dock.contentWindow.__emit(ch, data);
+  const newMessage = (a, n) => {
+    a.count += n;
+    a.dot = true;
+    a.mood = { ...a.mood, unread: a.count, lastNewAt: Date.now(), oldestUnreadAt: a.mood.oldestUnreadAt || Date.now(), lastActivityAt: Date.now() };
+    push();
+  };
+
+  const T = {
+    vi: {
+      float: 'Đang làm Excel vẫn thấy chat ở mép màn hình',
+      newmsg: 'Có tin mới: mèo nhảy, tin hiện ngay cạnh bong bóng',
+      hover: 'Rê chuột để xem nhanh',
+      reply: 'Bấm để trả lời, xong quay lại làm việc',
+      replyText: 'Ok em, 15 phút nữa anh gửi nhé',
+      happy: 'Trả lời nhanh: mèo vui',
+      multi: 'Nhiều nick của mọi app, cùng lúc',
+      share: 'Chia sẻ màn hình? Người xem không thấy bong bóng',
+      pip: 'Người xem thấy',
+      sub: 'Bong bóng chat nổi cho máy tính',
+      tags: ['Miễn phí', 'Mã nguồn mở', 'Windows', 'Không thu thập dữ liệu'],
+    },
+    en: {
+      float: 'Your chats stay on the edge of the screen while you work',
+      newmsg: 'New message: the cat jumps and the message pops up',
+      hover: 'Hover to peek',
+      reply: 'Click to reply, then back to work',
+      replyText: 'Sure, sending it in 15 minutes',
+      happy: 'Replied fast: happy cat',
+      multi: 'Several accounts of every app, at once',
+      share: 'Sharing your screen? Viewers do not see the bubbles',
+      pip: 'What viewers see',
+      sub: 'Floating chat heads for your desktop',
+      tags: ['Free', 'Open source', 'Windows', 'No telemetry'],
+    },
+  }[LANG];
+
+  async function card(on, withUrl) {
+    const c = $('card');
+    if (on) {
+      $('card-sub').textContent = T.sub;
+      $('card-tags').innerHTML = T.tags.map((t) => '<span>' + t + '</span>').join('');
+      $('card-url').textContent = withUrl ? 'chatlings.submit69.com' : '';
+      c.style.opacity = 0;
+      c.classList.add('on');
+      await sleep(30);
+      c.style.opacity = 1;
+    } else {
+      c.style.opacity = 0;
+      await sleep(500);
+      c.classList.remove('on');
+    }
+  }
+
+  async function runVideo() {
+    dock.src = DOCK_URL;
+    await new Promise((r) => (dock.onload = r));
+    await card(true, false);
+    await sleep(2200);
+    await card(false);
+    await caption(T.float);
+    await sleep(2600);
+
+    // Zalo message: cat jumps, the preview pops up by itself
+    await caption(T.newmsg);
+    const z = accounts[0];
+    newMessage(z, 1);
+    await sleep(300);
+    inDockEmit('dock:peek', { id: 'z', ms: 3500 });
+    await sleep(3600);
+    newMessage(accounts[1], 1);
+    await sleep(1000);
+
+    // hover Discord
+    await caption(T.hover);
+    const d = bubbleRect(2);
+    await cursorTo(d.x, d.y);
+    hover(2, true);
+    await sleep(2600);
+    hover(2, false);
+
+    // click Zalo, type a reply
+    await caption(T.reply);
+    const zr = bubbleRect(0);
+    await cursorTo(zr.x, zr.y);
+    $('ptitle').textContent = z.name;
+    $('popup').style.setProperty('--c', z.color);
+    $('chat').src = CHAT_URL;
+    await new Promise((r) => ($('chat').onload = r));
+    $('chat').contentWindow.fake.add(1);
+    $('popup').classList.add('open');
+    z.open = true;
+    push();
+    await sleep(700);
+    await $('chat').contentWindow.fake.send(T.replyText, 50);
+    await sleep(700);
+    await cursorTo(Math.round(W * 0.3), Math.round(H * 0.55), 700);
+    $('popup').classList.remove('open');
+    z.open = false;
+    z.count = 0;
+    z.dot = false;
+    z.mood = { ...z.mood, unread: 0, oldestUnreadAt: 0, lastReadAt: Date.now(), lastReplyLatency: 20000, lastActivityAt: Date.now() };
+    push();
+    await caption(T.happy);
+    await sleep(2400);
+
+    // more accounts
+    await caption(T.multi);
+    accounts.push(base({ id: 'z2', name: 'Zalo 2', color: '#EC4899', skin: 'dog', adapter: 'zalo', adapterName: 'Zalo', icon: icons.zalo, iconColor: '#0068FF' }));
+    push();
+    await sleep(800);
+    accounts.push(base({ id: 't', name: 'Telegram', color: '#8B5CF6', skin: 'cat', adapter: 'telegram', adapterName: 'Telegram', icon: icons.telegram, iconColor: '#26A5E4' }));
+    push();
+    await sleep(800);
+    newMessage(accounts[4], 3);
+    await sleep(1600);
+
+    // screen sharing: viewers do not see the bubbles
+    await caption(T.share);
+    const shot = $('pip-shot');
+    shot.innerHTML = '';
+    const clone = document.querySelector('.app').cloneNode(true);
+    clone.style.position = 'relative';
+    clone.style.width = W + 'px';
+    clone.style.height = H + 'px';
+    shot.append(clone);
+    shot.style.transform = 'scale(' + 300 / W + ')';
+    $('pip-label').textContent = '● ' + T.pip;
+    $('pip').classList.add('on');
+    await sleep(3400);
+    $('pip').classList.remove('on');
+    await caption('');
+
+    await card(true, true);
+    await sleep(3200);
+    document.title = 'DONE';
+  }
+
   async function run() {
+    if (TIMELINE === 'video') return runVideo();
     dock.src = DOCK_URL;
     await new Promise((r) => (dock.onload = r));
     await sleep(900);

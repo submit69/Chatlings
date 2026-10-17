@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.locale.1.9.0.schema.json
+PackageIdentifier: submit69.Chatlings
+PackageVersion: 0.1.1
+PackageLocale: vi-VN
+Publisher: submit69
+PackageName: Chatlings
+License: MIT
+ShortDescription: Bong bóng chat nổi cho Zalo, Messenger, WhatsApp, Telegram, Discord và nhiều app khác, dùng nhiều tài khoản cùng lúc.
+Description: |-
+  Chatlings biến các app chat web thành bong bóng nổi ở mép màn hình, giống bong bóng chat trên điện thoại.
+  Mỗi tài khoản chạy bản web chính thức trong hồ sơ riêng, nên dùng được nhiều nick của cùng một app.
+  Bong bóng hiện số tin chưa đọc, xem trước tin khi rê chuột, tự ẩn khi chia sẻ màn hình và có thể ngủ để tiết kiệm RAM.
+  Không thu thập dữ liệu.
+Tags:
+  - chat
+  - nhieu-tai-khoan
+  - zalo
+ManifestType: locale
+ManifestVersion: 1.9.0

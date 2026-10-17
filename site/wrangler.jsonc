@@ -1,0 +1,8 @@
+// Landing page: static assets only, no Worker code.
+// Build: node site/build.mjs   Deploy: cd site && npx wrangler deploy
+{
+  "name": "chatlings-site",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./public" },
+  "routes": [{ "pattern": "chatlings.submit69.com", "custom_domain": true }],
+}

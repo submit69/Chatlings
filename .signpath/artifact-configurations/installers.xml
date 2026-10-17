@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SignPath artifact configuration "installers": Chatlings-Setup-x.y.z.exe and
+     Chatlings-x.y.z-portable.exe, uploaded by .github/workflows/release.yml as a zip.
+     Paste into SignPath (Project chatlings → Artifact configurations → slug "installers"). -->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file-set>
+      <include path="Chatlings-Setup-*.exe" min-matches="1" max-matches="1" />
+      <include path="Chatlings-*-portable.exe" min-matches="1" max-matches="1" />
+      <for-each>
+        <authenticode-sign />
+      </for-each>
+    </pe-file-set>
+  </zip-file>
+</artifact-configuration>

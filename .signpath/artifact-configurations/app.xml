@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SignPath artifact configuration "app": the unpacked app (dist/win-unpacked),
+     uploaded by .github/workflows/release.yml as a zip. Paste into SignPath
+     (Project chatlings → Artifact configurations → slug "app"). -->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <pe-file path="Chatlings.exe">
+      <authenticode-sign />
+    </pe-file>
+    <pe-file-set>
+      <include path="*.dll" min-matches="0" max-matches="unbounded" />
+      <include path="resources/app.asar.unpacked/**/*.node" min-matches="0" max-matches="unbounded" />
+      <for-each>
+        <authenticode-sign />
+      </for-each>
+    </pe-file-set>
+  </zip-file>
+</artifact-configuration>

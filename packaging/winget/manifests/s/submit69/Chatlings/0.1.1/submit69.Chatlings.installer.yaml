@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json
+PackageIdentifier: submit69.Chatlings
+PackageVersion: 0.1.1
+InstallerType: nullsoft
+Scope: user
+InstallModes:
+  - interactive
+  - silent
+  - silentWithProgress
+UpgradeBehavior: install
+ReleaseDate: 2026-10-17
+AppsAndFeaturesEntries:
+  - DisplayName: Chatlings
+    Publisher: submit69
+    ProductCode: 15474599-89b9-50d5-878b-1a0596660427
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/submit69/Chatlings/releases/download/v0.1.1/Chatlings-Setup-0.1.1.exe
+    InstallerSha256: E1CF8D9E0DBDF924B810896AEDF562B10E18DDBA4630B1DAB394B0CD5AC1C797
+    ProductCode: 15474599-89b9-50d5-878b-1a0596660427
+ManifestType: installer
+ManifestVersion: 1.9.0

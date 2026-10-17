@@ -20,8 +20,9 @@
       .conv { display: flex; justify-content: space-between; padding: 6px 4px; border-radius: 6px; }
       .fake-badge { background: #ef4444; color: #fff; border-radius: 9px; padding: 0 6px; font-size: 11px; }
       main { display: flex; flex-direction: column; min-width: 0; }
-      @media (max-width: 340px) { body { grid-template-columns: 0 minmax(0, 1fr); } aside { display: none; } }
+      @media (max-width: 340px) { body { grid-template-columns: minmax(0, 1fr); } aside { display: none; } }
       #log { flex: 1; overflow: auto; padding: 12px; }
+      .msg.me { margin-left: auto; background: #dbeafe; }
       .msg { background: #f1f5f9; border-radius: 12px; padding: 6px 10px; margin: 6px 0; max-width: 85%; width: fit-content; overflow-wrap: anywhere; }
       footer { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #e2e8f0; }
       footer input { flex: 1; min-width: 0; padding: 6px; }
@@ -42,8 +43,11 @@
       const mode = q.get('mode') || 'title';
       const app = q.get('adapter') || 'fake';
       const base = 'Fake ' + app;
-      const names = ['Lan', 'Minh', 'Team Design', 'Mẹ', 'Huy'];
-      const texts = ['Ok anh ơi, em gửi file nhé', 'Chiều nay họp lúc 3h nha', 'Báo giá mới đã cập nhật', 'Con ăn cơm chưa?', 'Deploy xong rồi 🎉'];
+      const en = q.get('lang') === 'en';
+      const names = en ? ['Lan', 'Minh', 'Design team', 'Mom', 'Huy'] : ['Lan', 'Minh', 'Team Design', 'Mẹ', 'Huy'];
+      const texts = en
+        ? ['Hi! The client is asking for the Q4 quote', 'Meeting at 3pm today', 'New price list is up', 'Have you eaten yet?', 'Deployed 🎉']
+        : ['Anh ơi, khách hỏi báo giá Q4 ạ', 'Chiều nay họp lúc 3h nha', 'Báo giá mới đã cập nhật', 'Con ăn cơm chưa?', 'Deploy xong rồi 🎉'];
       let unread = 0;
       let seq = 0;
       const colors = ['#f97316', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
@@ -86,6 +90,22 @@
           }
           paint();
           return unread;
+        },
+        /** Type and send an own message (used by the demo video). */
+        async send(text, perChar = 45) {
+          const input = document.querySelector('footer input');
+          input.value = '';
+          for (const ch of text) {
+            input.value += ch;
+            await new Promise((r) => setTimeout(r, perChar));
+          }
+          const m = document.createElement('div');
+          m.className = 'msg me';
+          m.textContent = text;
+          document.getElementById('log').append(m);
+          input.value = '';
+          unread = 0;
+          paint();
         },
         read() {
           unread = 0;

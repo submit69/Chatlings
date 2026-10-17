@@ -1,13 +1,10 @@
 // Electron entry for recording docs/demo.gif (run via `npm run demo`).
 // Renders scripts/demo/stage.html offscreen, grabs frames, encodes a GIF.
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
-const { pathToFileURL } = require('url');
 const { app, BrowserWindow } = require('electron');
 const { GIFEncoder, quantize, applyPalette } = require('gifenc');
-
-const root = path.join(__dirname, '..', '..');
+const { root, stageUrl } = require('./setup.cjs');
 const OUT = process.env.DEMO_OUT || path.join(root, 'docs', 'demo.gif');
 const W = 960;
 const H = 560;
@@ -18,26 +15,7 @@ const FRAMES_DIR = process.env.DEMO_FRAMES; // optional: dump some PNG frames to
 app.disableHardwareAcceleration();
 
 app.whenReady().then(async () => {
-  // A copy of dock.html that loads the mocked bridge first.
-  const renderer = path.join(root, 'src', 'renderer');
-  let dock = fs.readFileSync(path.join(renderer, 'dock.html'), 'utf8');
-  dock = dock
-    .replace(/<meta http-equiv="Content-Security-Policy"[^>]*>/, '')
-    .replace('<head>', `<head><base href="${pathToFileURL(renderer + path.sep).href}">`)
-    .replace('<script src="common.js"></script>', `<script src="${pathToFileURL(path.join(__dirname, 'mock-bb.js')).href}"></script><script src="common.js"></script>`);
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bb-demo-'));
-  fs.writeFileSync(path.join(tmp, 'dock.html'), dock);
-
-  const registry = require(path.join(root, 'src', 'adapters'));
-  const icons = Object.fromEntries(['zalo', 'whatsapp', 'discord'].map((id) => [id, registry.get(id).icon]));
-  const dict = JSON.parse(fs.readFileSync(path.join(root, 'src', 'i18n', 'en.json'), 'utf8'));
-  const chat = pathToFileURL(path.join(root, 'test', 'fake-chat.html'));
-  chat.search = '?adapter=zalo&mode=title&id=demo';
-  const stage = pathToFileURL(path.join(__dirname, 'stage.html'));
-  stage.searchParams.set('dock', pathToFileURL(path.join(tmp, 'dock.html')).href);
-  stage.searchParams.set('chat', chat.href);
-  stage.searchParams.set('dict', encodeURIComponent(JSON.stringify(dict)));
-  stage.searchParams.set('icons', encodeURIComponent(JSON.stringify(icons)));
+  const stage = stageUrl({ lang: 'en', timeline: 'gif' });
 
   const win = new BrowserWindow({
     width: W,
@@ -47,7 +25,7 @@ app.whenReady().then(async () => {
     webPreferences: { offscreen: true, webSecurity: false, backgroundThrottling: false },
   });
   win.webContents.setFrameRate(30);
-  await win.loadURL(stage.href);
+  await win.loadURL(stage);
 
   const frames = [];
   let done = false;

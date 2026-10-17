@@ -12,7 +12,7 @@ Several accounts at once · cat & dog bubbles · hidden from screen sharing · n
 
 <img src="docs/demo.gif" width="760" alt="Bubbles for Zalo, WhatsApp and Discord floating over a spreadsheet; a message arrives, the cat bubble jumps, hovering shows a preview, clicking opens the chat" />
 
-### [⬇ Download for Windows](https://github.com/submit69/chatlings/releases/latest)
+### [⬇ Download for Windows](https://github.com/submit69/chatlings/releases/latest) · [Website & 30-second video](https://chatlings.submit69.com)
 
 </div>
 

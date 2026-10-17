@@ -1,0 +1,12 @@
+{
+  "name": "chatlings-site",
+  "private": true,
+  "description": "Landing page for Chatlings at chatlings.submit69.com (Cloudflare Workers static assets).",
+  "scripts": {
+    "build": "node build.mjs",
+    "deploy": "node build.mjs && wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.149.0"
+  }
+}

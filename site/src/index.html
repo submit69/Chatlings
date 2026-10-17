@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chatlings: bong bóng chat nổi cho Zalo, Messenger, WhatsApp trên máy tính</title>
+    <meta name="description" content="Zalo, Messenger, WhatsApp, Telegram, Discord thành bong bóng nổi ở mép màn hình. Nhiều tài khoản cùng lúc, tự ẩn khi chia sẻ màn hình. Miễn phí, mã nguồn mở, không thu thập dữ liệu." />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <link rel="canonical" href="https://chatlings.submit69.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://chatlings.submit69.com/" />
+    <meta property="og:title" content="Chatlings: bong bóng chat nổi cho máy tính" />
+    <meta property="og:description" content="Zalo, Messenger, WhatsApp, Telegram, Discord… thành bong bóng nổi. Đang làm Excel vẫn chat được. Miễn phí, mã nguồn mở." />
+    <meta property="og:image" content="https://chatlings.submit69.com/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#6366f1" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg2: #f6f7fb;
+        --fg: #0f172a;
+        --muted: #5b6475;
+        --line: #e6e8ef;
+        --card: #ffffff;
+        --accent: #6366f1;
+        --accent2: #ec4899;
+        --grad: linear-gradient(135deg, #6366f1, #ec4899);
+        --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b1020;
+          --bg2: #111830;
+          --fg: #eef1f8;
+          --muted: #a3acc2;
+          --line: #232c47;
+          --card: #121a33;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.6 'Segoe UI', system-ui, -apple-system, sans-serif;
+      }
+      a {
+        color: var(--accent);
+      }
+      .wrap {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      /* nav */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: color-mix(in srgb, var(--bg) 85%, transparent);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+      nav .wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        height: 60px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 19px;
+        color: var(--fg);
+        text-decoration: none;
+      }
+      .brand img {
+        width: 30px;
+        height: 30px;
+      }
+      nav .links {
+        display: flex;
+        gap: 18px;
+        margin-left: auto;
+        align-items: center;
+      }
+      nav .links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 15px;
+      }
+      nav .links a:hover {
+        color: var(--fg);
+      }
+      .lang {
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--fg);
+        border-radius: 999px;
+        padding: 4px 12px;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      @media (max-width: 720px) {
+        nav .links a.opt {
+          display: none;
+        }
+      }
+      /* hero */
+      .hero {
+        padding: 56px 0 30px;
+        text-align: center;
+        background: radial-gradient(1000px 400px at 50% -10%, color-mix(in srgb, var(--accent) 16%, transparent), transparent);
+      }
+      .pill {
+        display: inline-block;
+        font-size: 14px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--muted);
+      }
+      h1 {
+        font-size: clamp(34px, 6vw, 60px);
+        line-height: 1.1;
+        letter-spacing: -1px;
+        margin: 18px auto 14px;
+        max-width: 860px;
+      }
+      h1 .g {
+        background: var(--grad);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .sub {
+        font-size: clamp(17px, 2.2vw, 20px);
+        color: var(--muted);
+        max-width: 720px;
+        margin: 0 auto 26px;
+      }
+      .cta {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 14px;
+        padding: 14px 22px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 17px;
+        border: 1px solid var(--line);
+        color: var(--fg);
+        background: var(--card);
+      }
+      .btn.primary {
+        background: var(--grad);
+        color: #fff;
+        border: 0;
+        box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
+      }
+      .btn svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+      .fine {
+        margin-top: 12px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .video {
+        margin: 36px auto 0;
+        max-width: 980px;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+        border: 1px solid var(--line);
+        background: #fff;
+        aspect-ratio: 16 / 9;
+      }
+      .video video {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      /* apps */
+      .apps {
+        padding: 34px 0 10px;
+        text-align: center;
+      }
+      .apps p {
+        color: var(--muted);
+        margin: 0 0 14px;
+        font-size: 15px;
+      }
+      .apps ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      .apps li {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 999px;
+        padding: 6px 14px 6px 6px;
+        font-size: 15px;
+      }
+      .apps li i {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+      }
+      .apps li svg {
+        width: 15px;
+        height: 15px;
+      }
+      /* sections */
+      section {
+        padding: 64px 0;
+      }
+      section.alt {
+        background: var(--bg2);
+      }
+      h2 {
+        font-size: clamp(26px, 4vw, 38px);
+        letter-spacing: -0.5px;
+        margin: 0 0 10px;
+        text-align: center;
+      }
+      .lead {
+        text-align: center;
+        color: var(--muted);
+        max-width: 700px;
+        margin: 0 auto 36px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+      }
+      .card .ico {
+        font-size: 28px;
+        line-height: 1;
+      }
+      .card h3 {
+        margin: 12px 0 6px;
+        font-size: 18px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+      .steps {
+        counter-reset: s;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+      }
+      .steps .card {
+        position: relative;
+        padding-top: 54px;
+      }
+      .steps .card::before {
+        counter-increment: s;
+        content: counter(s);
+        position: absolute;
+        top: 16px;
+        left: 20px;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--grad);
+        color: #fff;
+        font-weight: 800;
+        display: grid;
+        place-items: center;
+      }
+      code {
+        background: var(--bg2);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 1px 6px;
+        font-size: 14px;
+      }
+      .privacy {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+      details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 18px;
+        margin-bottom: 10px;
+      }
+      summary {
+        cursor: pointer;
+        font-weight: 700;
+      }
+      details p {
+        color: var(--muted);
+        margin: 10px 0 0;
+      }
+      .faq {
+        max-width: 820px;
+        margin: 0 auto;
+      }
+      .final {
+        text-align: center;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 30px 0 40px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      footer .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 24px;
+        align-items: center;
+      }
+      footer .dis {
+        flex-basis: 100%;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="wrap">
+        <a class="brand" href="#"><img src="/icon.png" alt="" width="30" height="30" />Chatlings</a>
+        <div class="links">
+          <a class="opt" href="#features" data-i18n="nav.features">Tính năng</a>
+          <a class="opt" href="#privacy" data-i18n="nav.privacy">Riêng tư</a>
+          <a class="opt" href="#faq" data-i18n="nav.faq">Hỏi đáp</a>
+          <a href="https://github.com/submit69/Chatlings" rel="noopener">GitHub</a>
+          <button class="lang" id="lang" type="button">EN</button>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <span class="pill" data-i18n="hero.pill">Miễn phí · Mã nguồn mở · Windows 10/11</span>
+        <h1><span data-i18n="hero.h1a">Chat nổi trên màn hình,</span> <span class="g" data-i18n="hero.h1b">đang làm vẫn trả lời được</span></h1>
+        <p class="sub" data-i18n="hero.sub">Zalo, Messenger, WhatsApp, Telegram, Discord… thành bong bóng nhỏ ở mép màn hình, như bong bóng chat trên điện thoại. Nhiều nick cùng lúc, tin mới bật lên ngay cạnh bong bóng.</p>
+        <div class="cta">
+          <a class="btn primary dl" id="dl" href="https://github.com/submit69/Chatlings/releases/latest"
+            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span data-i18n="hero.download">Tải cho Windows</span></a
+          >
+          <a class="btn" href="https://github.com/submit69/Chatlings" rel="noopener"
+            ><svg viewBox="0 0 24 24"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.5 18.3 4.8 18.3 4.8c.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z" /></svg
+            ><span data-i18n="hero.source">Mã nguồn trên GitHub</span></a
+          >
+        </div>
+        <div class="fine"><span id="ver"></span> <span data-i18n="hero.fine">Không cần quyền admin. Không thu thập dữ liệu.</span></div>
+        <div class="video">
+          <video id="video" autoplay muted loop playsinline preload="auto" poster="/chatlings-demo-vi.jpg" aria-label="Demo">
+            <source src="/chatlings-demo-vi.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </header>
+
+    <div class="apps">
+      <div class="wrap">
+        <p data-i18n="apps.title">Dùng bản web chính thức của từng app, mỗi nick một hồ sơ riêng</p>
+        <ul>
+          <!--APPS-->
+        </ul>
+      </div>
+    </div>
+
+    <section id="features">
+      <div class="wrap">
+        <h2 data-i18n="f.title">Mọi thứ cần để chat mà không rời công việc</h2>
+        <p class="lead" data-i18n="f.lead">Bong bóng luôn nằm trên cùng, kể cả khi Excel phóng to. Bấm là chat, bấm ra ngoài là quay lại làm.</p>
+        <div class="grid">
+          <div class="card"><div class="ico">🫧</div><h3 data-i18n="f1.t">Bong bóng nổi</h3><p data-i18n="f1.d">Kéo đi đâu cũng được, thả ra tự hít vào mép màn hình. Rê chuột lên có nút × để ẩn tạm.</p></div>
+          <div class="card"><div class="ico">💬</div><h3 data-i18n="f2.t">Tin mới bật lên</h3><p data-i18n="f2.d">Có tin là thẻ xem trước hiện ngay cạnh bong bóng vài giây, không chiếm bàn phím khi đang gõ.</p></div>
+          <div class="card"><div class="ico">👥</div><h3 data-i18n="f3.t">Nhiều nick cùng lúc</h3><p data-i18n="f3.d">2 Zalo + 1 WhatsApp + 1 Discord? Được. Mỗi nick tách riêng, không đá nhau.</p></div>
+          <div class="card"><div class="ico">🖥️</div><h3 data-i18n="f4.t">Cửa sổ đầy đủ khi cần</h3><p data-i18n="f4.d">Mở app là ra khung chat to với danh sách nick bên trái. Thu nhỏ lại là thành bong bóng.</p></div>
+          <div class="card"><div class="ico">🙈</div><h3 data-i18n="f5.t">Ẩn khi chia sẻ màn hình</h3><p data-i18n="f5.d">Meet, Zoom, Teams, OBS không thấy bong bóng và cửa sổ chat. Bạn vẫn thấy bình thường.</p></div>
+          <div class="card"><div class="ico">🐱</div><h3 data-i18n="f6.t">Mèo, cún có cảm xúc</h3><p data-i18n="f6.d">Có tin thì nhảy, trả lời nhanh thì thả tim, để tin tồn lâu thì cụp tai.</p></div>
+          <div class="card"><div class="ico">🌙</div><h3 data-i18n="f7.t">Giờ làm việc, không làm phiền</h3><p data-i18n="f7.d">Đặt giờ riêng từng nick (cả ca đêm), nhóm Công việc / Cá nhân, im lặng 1 giờ hay đến sáng mai.</p></div>
+          <div class="card"><div class="ico">🔒</div><h3 data-i18n="f8.t">Khoá PIN, âm báo riêng</h3><p data-i18n="f8.d">Tự khoá khi rời máy. Mỗi nick một tiếng báo: chuông, meo, gâu hoặc file của bạn.</p></div>
+          <div class="card"><div class="ico">💤</div><h3 data-i18n="f9.t">Tiết kiệm RAM</h3><p data-i18n="f9.d">Nick ít dùng có thể ngủ, gần như 0 MB, thỉnh thoảng thức dậy xem tin mới.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="install">
+      <div class="wrap">
+        <h2 data-i18n="i.title">Cài trong một phút</h2>
+        <p class="lead" data-i18n="i.lead">Cài riêng cho tài khoản Windows của bạn, không cần quyền admin. Có tự cập nhật.</p>
+        <div class="steps">
+          <div class="card"><h3 data-i18n="i1.t">Tải file cài</h3><p data-i18n="i1.d">Bấm "Tải cho Windows" ở trên. Hoặc dùng bản portable trên trang Releases, không cần cài.</p></div>
+          <div class="card"><h3 data-i18n="i2.t">Mở file</h3><p data-i18n="i2.d">File chưa được ký số nên Windows có thể cảnh báo: bấm "More info" rồi "Run anyway". Mã nguồn công khai trên GitHub.</p></div>
+          <div class="card"><h3 data-i18n="i3.t">Thêm nick</h3><p data-i18n="i3.d">Chọn app, đăng nhập trên trang chính thức của app (Zalo, WhatsApp, Telegram quét QR). Xong.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="wrap">
+        <h2 data-i18n="p.title">Riêng tư là mặc định</h2>
+        <p class="lead" data-i18n="p.lead">Chatlings không có máy chủ riêng. Mã nguồn mở MIT, bạn tự đọc được từng dòng.</p>
+        <div class="privacy">
+          <div class="card"><h3 data-i18n="p1.t">Không thu thập dữ liệu</h3><p data-i18n="p1.d">Không telemetry, không analytics, không quảng cáo. App chỉ kết nối tới các trang chat bạn thêm và GitHub để kiểm tra bản mới.</p></div>
+          <div class="card"><h3 data-i18n="p2.t">Không dùng API lậu</h3><p data-i18n="p2.d">Chạy đúng bản web chính thức của từng app, an toàn cho tài khoản như khi dùng trình duyệt.</p></div>
+          <div class="card"><h3 data-i18n="p3.t">Đăng nhập nằm trên máy bạn</h3><p data-i18n="p3.d">Mỗi nick một hồ sơ trình duyệt riêng trong thư mục Windows của bạn. Xem trước tin chỉ giữ trong RAM.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt" id="faq">
+      <div class="wrap faq">
+        <h2 data-i18n="q.title">Hỏi đáp</h2>
+        <details><summary data-i18n="q1.q">Có miễn phí không?</summary><p data-i18n="q1.a">Có, miễn phí hoàn toàn và mã nguồn mở theo giấy phép MIT.</p></details>
+        <details><summary data-i18n="q2.q">Có bị khoá nick không?</summary><p data-i18n="q2.a">Chatlings chạy bản web chính thức, giống mở chat.zalo.me hay web.whatsapp.com trong trình duyệt, không dùng API không chính thức.</p></details>
+        <details><summary data-i18n="q3.q">Có làm thoát Zalo trên điện thoại hay máy tính không?</summary><p data-i18n="q3.a">Không đụng điện thoại. Zalo và WhatsApp giới hạn số phiên web/máy tính cho mỗi tài khoản, nên nếu đã đủ giới hạn, đăng nhập ở đây có thể làm thoát một phiên web khác của cùng nick đó. Các nick khác nhau không ảnh hưởng nhau.</p></details>
+        <details><summary data-i18n="q4.q">Sao không có LINE, Viber, Signal?</summary><p data-i18n="q4.a">Các app này không có bản web nên không có gì để đưa vào bong bóng. Với app chat web khác, bạn có thể tự thêm bằng địa chỉ trang.</p></details>
+        <details><summary data-i18n="q5.q">Tốn RAM không?</summary><p data-i18n="q5.a">Phần của Chatlings khoảng 100 MB. Mỗi nick đang mở tốn RAM như một tab Chrome của trang đó. Nick ít dùng có thể cho ngủ để gần như 0 MB.</p></details>
+        <details><summary data-i18n="q6.q">Có bản macOS, Linux không?</summary><p data-i18n="q6.a">Hiện chỉ có Windows 10/11. macOS và Linux nằm trong kế hoạch.</p></details>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <h2 data-i18n="end.title">Thử ngay, chỉ một phút</h2>
+        <p class="lead" data-i18n="end.lead">Thích thì cho dự án một ⭐ trên GitHub nhé.</p>
+        <div class="cta">
+          <a class="btn primary dl" href="https://github.com/submit69/Chatlings/releases/latest"
+            ><svg viewBox="0 0 24 24"><path d="M3 5.5 10.5 4.4v7.1H3zm0 13 7.5 1.1v-7H3zm8.3 1.2L21 21v-8.5h-9.7zm0-15.4V11.5H21V3z" /></svg><span data-i18n="hero.download">Tải cho Windows</span></a
+          >
+          <a class="btn" href="https://github.com/submit69/Chatlings" rel="noopener">⭐ GitHub</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <span>© Chatlings · MIT</span>
+        <a href="https://github.com/submit69/Chatlings">GitHub</a>
+        <a href="https://github.com/submit69/Chatlings/blob/main/PRIVACY.md" data-i18n="foot.privacy">Chính sách riêng tư</a>
+        <a href="https://noilamviec.com/?utm_source=chatlings&amp;utm_medium=site&amp;utm_campaign=footer" rel="noopener">noilamviec.com: <span data-i18n="foot.nlv">review công ty</span></a>
+        <span class="dis" data-i18n="foot.dis">Chatlings là dự án độc lập, không liên kết với Zalo, Meta, Telegram, Discord, Microsoft, Google hay dịch vụ nào được hỗ trợ. Mọi nhãn hiệu thuộc về chủ sở hữu.</span>
+      </div>
+    </footer>
+
+    <script src="/site.js"></script>
+  </body>
+</html>

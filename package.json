@@ -33,7 +33,9 @@
     "icons": "node scripts/make-icons.mjs",
     "demo": "node scripts/make-demo.mjs",
     "dist": "electron-builder --win",
-    "dist:dir": "electron-builder --win --dir"
+    "dist:dir": "electron-builder --win --dir",
+    "video": "node scripts/make-video.mjs",
+    "site": "cd site && npm run deploy"
   },
   "dependencies": {
     "electron-updater": "^6.8.9",
@@ -42,6 +44,7 @@
   "devDependencies": {
     "electron": "^44.7.2",
     "electron-builder": "^26.15.3",
+    "ffmpeg-static": "^5.3.0",
     "gifenc": "^1.0.3",
     "playwright-core": "^1.64.1"
   },
@@ -51,6 +54,7 @@
   "allowScripts": {
     "electron@44.7.2": true,
     "koffi@3.3.3": true,
-    "electron-winstaller@5.4.0": true
+    "electron-winstaller@5.4.0": true,
+    "ffmpeg-static@5.3.0": true
   }
 }
