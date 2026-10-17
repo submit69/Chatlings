@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
+    <title>Bongbong</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      body {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        height: 100vh;
+      }
+      nav {
+        background: var(--panel);
+        border-right: 1px solid var(--line);
+        padding: 18px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      nav .brand {
+        font-weight: 700;
+        font-size: 17px;
+        padding: 0 10px 14px;
+      }
+      nav button {
+        text-align: left;
+        border: 0;
+        background: transparent;
+        padding: 8px 10px;
+      }
+      nav button.on {
+        background: var(--bg);
+        color: var(--accent);
+        font-weight: 600;
+      }
+      main {
+        overflow: auto;
+        padding: 22px 28px 40px;
+      }
+      section {
+        display: none;
+      }
+      section.on {
+        display: block;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 4px 16px;
+        margin-bottom: 14px;
+      }
+      .opt {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .opt:last-child {
+        border-bottom: 0;
+      }
+      .opt label {
+        flex: 1;
+      }
+      .opt .hint {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 210px 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+      .acc-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .acc-list button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-align: left;
+        border-color: transparent;
+      }
+      .acc-list button.on {
+        border-color: var(--accent);
+        background: var(--panel);
+      }
+      .acc-list .glyph {
+        width: 26px;
+        height: 26px;
+      }
+      .acc-list .glyph svg {
+        width: 14px;
+        height: 14px;
+      }
+      .swatches {
+        display: flex;
+        gap: 6px;
+      }
+      .swatches button {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        padding: 0;
+        border: 2px solid transparent;
+      }
+      .swatches button.on {
+        border-color: var(--fg);
+      }
+      .days {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .days label {
+        flex: none;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 2px 8px;
+        cursor: pointer;
+      }
+      .days input {
+        margin: 0 4px 0 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td,
+      th {
+        text-align: left;
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 12px;
+      }
+      td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        padding: 12px 0;
+      }
+      .stat {
+        display: flex;
+        gap: 18px;
+        margin: 6px 0 14px;
+      }
+      .stat div b {
+        display: block;
+        font-size: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="nav">
+      <div class="brand">Bongbong</div>
+      <button data-tab="general" data-i18n="settings.tab.general"></button>
+      <button data-tab="accounts" data-i18n="settings.tab.accounts"></button>
+      <button data-tab="privacy" data-i18n="settings.tab.privacy"></button>
+      <button data-tab="memory" data-i18n="settings.tab.memory"></button>
+      <button data-tab="about" data-i18n="settings.tab.about"></button>
+    </nav>
+    <main>
+      <section id="general"></section>
+      <section id="accounts"></section>
+      <section id="privacy"></section>
+      <section id="memory"></section>
+      <section id="about"></section>
+    </main>
+    <script src="common.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>

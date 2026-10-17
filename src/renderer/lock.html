@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Bongbong</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      body {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--panel);
+      }
+      .box {
+        text-align: center;
+        width: 260px;
+      }
+      .lock {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: grid;
+        place-items: center;
+      }
+      .lock svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: var(--accent-fg);
+        stroke-width: 2;
+      }
+      .dots {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 16px 0 6px;
+        height: 14px;
+      }
+      .dots i {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid var(--muted);
+      }
+      .dots i.on {
+        background: var(--fg);
+        border-color: var(--fg);
+      }
+      .dots.shake {
+        animation: shake 0.35s;
+      }
+      @keyframes shake {
+        25% {
+          transform: translateX(-8px);
+        }
+        75% {
+          transform: translateX(8px);
+        }
+      }
+      .pad {
+        display: grid;
+        grid-template-columns: repeat(3, 64px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+      .pad button {
+        height: 52px;
+        font-size: 20px;
+        border-radius: 50%;
+        width: 52px;
+        justify-self: center;
+      }
+      #pin {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg></div>
+      <h1 data-i18n="lock.title"></h1>
+      <p class="muted small" data-i18n="lock.sub"></p>
+      <input id="pin" type="password" inputmode="numeric" maxlength="8" autocomplete="off" />
+      <div class="dots" id="dots"></div>
+      <div class="error small" id="msg"></div>
+      <div class="pad" id="pad"></div>
+    </div>
+    <script src="common.js"></script>
+    <script src="lock.js"></script>
+  </body>
+</html>

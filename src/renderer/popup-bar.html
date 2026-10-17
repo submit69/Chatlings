@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:" />
+    <title>Bongbong</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 36px;
+        overflow: hidden;
+        font: 13px 'Segoe UI', system-ui, sans-serif;
+        user-select: none;
+      }
+      body {
+        background: var(--c, #6366f1);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 4px 0 10px;
+        -webkit-app-region: drag;
+      }
+      .glyph {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.22);
+        display: grid;
+        place-items: center;
+        flex: none;
+      }
+      .glyph svg {
+        width: 12px;
+        height: 12px;
+      }
+      #name {
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      #app {
+        opacity: 0.8;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .grow {
+        flex: 1;
+      }
+      button {
+        -webkit-app-region: no-drag;
+        border: 0;
+        background: transparent;
+        color: #fff;
+        width: 30px;
+        height: 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+      }
+      button:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      button.on {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      button svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="glyph" id="glyph"></div>
+    <span id="name"></span>
+    <span id="app"></span>
+    <span class="grow"></span>
+    <button id="menu" data-i18n-title="bar.menu"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1" /><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /></svg></button>
+    <button id="reload" data-i18n-title="bar.reload"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.64-6.36" /><path d="M21 3v6h-6" /></svg></button>
+    <button id="pin" data-i18n-title="bar.pin"><svg viewBox="0 0 24 24"><path d="M12 17v5" /><path d="M9 10.76V4h6v6.76l3 3.24v2H6v-2z" /></svg></button>
+    <button id="close" data-i18n-title="bar.close"><svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+    <script src="common.js"></script>
+    <script src="popup-bar.js"></script>
+  </body>
+</html>

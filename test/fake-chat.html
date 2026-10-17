@@ -1,0 +1,105 @@
+<!doctype html>
+<!--
+  Fake chat page used with BONGBONG_FAKE=1 (tests, RAM report, demo).
+  ?mode=title    unread in document.title "(N) Fake ..."   (tier 1)
+  ?mode=dom      unread as .fake-badge elements             (tier 2)
+  ?mode=favicon  only the favicon changes                    (tier 3, dot)
+  ?mode=notify   only new Notification(...)                  (tier 3, dot + preview)
+  Drive it with window.fake.add(n) / window.fake.read().
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Fake chat</title>
+    <link rel="icon" id="fav" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%236366f1'/%3E%3C/svg%3E" />
+    <style>
+      body { margin: 0; font: 14px 'Segoe UI', system-ui, sans-serif; display: grid; grid-template-columns: 130px minmax(0, 1fr); height: 100vh; color: #0f172a; overflow: hidden; }
+      aside { background: #eef2ff; padding: 10px; border-right: 1px solid #c7d2fe; }
+      aside .me { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+      aside img { width: 32px; height: 32px; border-radius: 50%; }
+      .conv { display: flex; justify-content: space-between; padding: 6px 4px; border-radius: 6px; }
+      .fake-badge { background: #ef4444; color: #fff; border-radius: 9px; padding: 0 6px; font-size: 11px; }
+      main { display: flex; flex-direction: column; min-width: 0; }
+      @media (max-width: 340px) { body { grid-template-columns: 0 minmax(0, 1fr); } aside { display: none; } }
+      #log { flex: 1; overflow: auto; padding: 12px; }
+      .msg { background: #f1f5f9; border-radius: 12px; padding: 6px 10px; margin: 6px 0; max-width: 85%; width: fit-content; overflow-wrap: anywhere; }
+      footer { display: flex; gap: 6px; padding: 8px; border-top: 1px solid #e2e8f0; }
+      footer input { flex: 1; min-width: 0; padding: 6px; }
+    </style>
+  </head>
+  <body>
+    <aside>
+      <div class="me"><img id="fake-avatar" alt="" /><b id="fake-name"></b></div>
+      <div class="conv"><span>Lan</span><span id="b1"></span></div>
+      <div class="conv"><span>Team</span><span id="b2"></span></div>
+    </aside>
+    <main>
+      <div id="log"></div>
+      <footer><input placeholder="Type a message…" /><button id="add">+1</button><button id="read">Read</button></footer>
+    </main>
+    <script>
+      const q = new URLSearchParams(location.search);
+      const mode = q.get('mode') || 'title';
+      const app = q.get('adapter') || 'fake';
+      const base = 'Fake ' + app;
+      const names = ['Lan', 'Minh', 'Team Design', 'Mẹ', 'Huy'];
+      const texts = ['Ok anh ơi, em gửi file nhé', 'Chiều nay họp lúc 3h nha', 'Báo giá mới đã cập nhật', 'Con ăn cơm chưa?', 'Deploy xong rồi 🎉'];
+      let unread = 0;
+      let seq = 0;
+      const colors = ['#f97316', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6'];
+      const hue = colors[(app.length + (q.get('id') || '').length) % colors.length];
+      document.getElementById('fake-name').textContent = 'Me (' + app + ')';
+      document.getElementById('fake-avatar').src =
+        'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="${hue}"/><circle cx="20" cy="16" r="7" fill="#fff"/><path d="M7 38c2-9 8-12 13-12s11 3 13 12z" fill="#fff"/></svg>`);
+      document.title = base;
+      const fav = document.getElementById('fav');
+      const favNormal = fav.href;
+      const favUnread = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%236366f1'/%3E%3Ccircle cx='12' cy='4' r='4' fill='%23ef4444'/%3E%3C/svg%3E";
+
+      function paint() {
+        if (mode === 'title') document.title = unread ? `(${unread}) ${base}` : base;
+        if (mode === 'dom') {
+          const a = Math.ceil(unread / 2), b = Math.floor(unread / 2);
+          document.getElementById('b1').innerHTML = a ? `<span class="fake-badge">${a}</span>` : '';
+          document.getElementById('b2').innerHTML = b ? `<span class="fake-badge">${b}</span>` : '';
+        }
+        if (mode === 'favicon') {
+          // Replace the <link> like real apps do, so the change is noticed.
+          const old = document.querySelector('link[rel~="icon"]');
+          const l = document.createElement('link');
+          l.rel = 'icon';
+          l.href = unread ? favUnread : favNormal;
+          old.replaceWith(l);
+        }
+      }
+
+      window.fake = {
+        add(n = 1) {
+          for (let i = 0; i < n; i++) {
+            const k = seq++ % names.length;
+            unread++;
+            const m = document.createElement('div');
+            m.className = 'msg';
+            m.textContent = names[k] + ': ' + texts[k];
+            document.getElementById('log').append(m);
+            if (mode === 'notify') new Notification(names[k], { body: texts[k], tag: 'm' + seq });
+          }
+          paint();
+          return unread;
+        },
+        read() {
+          unread = 0;
+          paint();
+          return unread;
+        },
+        get unread() {
+          return unread;
+        },
+        mode,
+      };
+      document.getElementById('add').onclick = () => fake.add();
+      document.getElementById('read').onclick = () => fake.read();
+      if (q.get('auto')) setInterval(() => fake.add(), Number(q.get('auto')) * 1000);
+    </script>
+  </body>
+</html>

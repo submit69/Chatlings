@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Bongbong</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      main {
+        padding: 22px 26px 30px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      .tile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px solid var(--line);
+        min-height: 60px;
+      }
+      .tile:hover {
+        border-color: var(--accent);
+        box-shadow: 0 2px 10px rgba(99, 102, 241, 0.15);
+      }
+      .tile .n {
+        font-weight: 600;
+      }
+      .tile .h {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      form {
+        display: grid;
+        grid-template-columns: 1fr 2fr auto;
+        gap: 8px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+      .note {
+        margin-top: 22px;
+        padding: 12px 14px;
+        border-radius: var(--radius);
+        background: var(--panel);
+        border: 1px dashed var(--line);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 data-i18n="picker.heading"></h1>
+      <p class="muted" data-i18n="picker.sub"></p>
+      <h2 data-i18n="picker.tier1"></h2>
+      <div class="grid" id="tier1"></div>
+      <h2><span data-i18n="picker.tier2"></span> <span class="chip" data-i18n="picker.beta"></span></h2>
+      <p class="muted small" data-i18n="picker.tier2Hint"></p>
+      <div class="grid" id="tier2"></div>
+      <h2 data-i18n="picker.custom"></h2>
+      <p class="muted small" data-i18n="picker.customHint"></p>
+      <form id="custom">
+        <input type="text" id="cname" maxlength="40" data-i18n-placeholder="picker.customName" />
+        <input type="url" id="curl" required data-i18n-placeholder="picker.customUrl" />
+        <button class="primary" type="submit" data-i18n="picker.customAdd"></button>
+      </form>
+      <div class="error small" id="err"></div>
+      <div class="note small">
+        <b data-i18n="picker.unsupported"></b>
+        <span class="muted" data-i18n="picker.unsupportedList"></span>
+        <p class="muted" style="margin: 8px 0 0" data-i18n="picker.privacyNote"></p>
+      </div>
+    </main>
+    <script src="common.js"></script>
+    <script src="picker.js"></script>
+  </body>
+</html>

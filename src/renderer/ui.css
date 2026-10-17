@@ -1,0 +1,142 @@
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --accent: #6366f1;
+  --accent-fg: #ffffff;
+  --danger: #dc2626;
+  --radius: 12px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --fg: #f1f5f9;
+    --muted: #94a3b8;
+    --line: #334155;
+    --accent: #818cf8;
+    --accent-fg: #0f172a;
+    color-scheme: dark;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.45 'Segoe UI', system-ui, sans-serif;
+}
+h1 {
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+h2 {
+  font-size: 15px;
+  margin: 22px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+p {
+  margin: 0 0 10px;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 12px;
+}
+a {
+  color: var(--accent);
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+button:hover {
+  border-color: var(--accent);
+}
+button.primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+button.danger {
+  color: var(--danger);
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+input[type='text'],
+input[type='url'],
+input[type='password'],
+input[type='number'],
+input[type='time'],
+select {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 0;
+}
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.chip {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+@media (prefers-color-scheme: dark) {
+  .chip {
+    background: #78350f;
+    color: #fde68a;
+  }
+}
+.glyph {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.glyph svg {
+  width: 22px;
+  height: 22px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+.error {
+  color: var(--danger);
+  min-height: 1.4em;
+}

@@ -1,0 +1,40 @@
+appId: io.github.submit69.bongbong
+productName: Bongbong
+copyright: Copyright © 2026 Bongbong contributors
+directories:
+  output: dist
+  buildResources: build
+files:
+  - src/**/*
+  - build/icon.png
+  - build/tray*.png
+  - package.json
+  - "!**/*.map"
+  # koffi ships prebuilt binaries for every OS; keep only Windows x64.
+  - "!node_modules/@koromix/koffi-{linux,darwin,freebsd,openbsd,musl}*/**"
+  - "!node_modules/koffi/vendor/**"
+  - "!node_modules/koffi/doc/**"
+asarUnpack:
+  - "**/*.node"
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  artifactName: Bongbong-${version}-${arch}-${os}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: Bongbong
+  artifactName: Bongbong-Setup-${version}.${ext}
+portable:
+  artifactName: Bongbong-${version}-portable.${ext}
+publish:
+  provider: github
+  owner: submit69
+  repo: bongbongzalo
+  releaseType: release

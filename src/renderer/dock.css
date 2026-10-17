@@ -1,0 +1,451 @@
+/* Sizes must match src/main/layout.js */
+:root {
+  --bubble: 56px;
+  --gap: 12px;
+  --pad: 14px;
+  --column: calc(var(--bubble) + var(--pad) * 2);
+  --preview: 300px;
+  --red: #ef4444;
+  --card-bg: #ffffff;
+  --card-fg: #0f172a;
+  --card-muted: #64748b;
+  --card-line: #e2e8f0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: #1e293b;
+    --card-fg: #f1f5f9;
+    --card-muted: #94a3b8;
+    --card-line: #334155;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  font: 13px/1.35 'Segoe UI', system-ui, sans-serif;
+}
+
+#column {
+  position: absolute;
+  top: 0;
+  width: var(--column);
+  padding: var(--pad) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+}
+body.edge-right #column {
+  right: 0;
+}
+body.edge-left #column {
+  left: 0;
+}
+
+/* ---------- bubble ---------- */
+.bubble {
+  position: relative;
+  width: var(--bubble);
+  height: var(--bubble);
+  flex: none;
+  cursor: pointer;
+  transition: transform 0.18s ease;
+  touch-action: none;
+}
+.bubble.hover {
+  transform: scale(1.08);
+}
+.bubble.dragging {
+  cursor: grabbing;
+  transform: scale(1.04);
+}
+/* Memory note: with software rendering, every element that animates
+   continuously keeps its raster buffers alive (~15 MB per bubble). So idle
+   life is intermittent: dock.js adds .fidget to one bubble every few seconds
+   for ~1.6 s (blink, tail flick, breath, zzz). Only "excited" (first minute
+   after a message) and "happy" (10 s) animate continuously. */
+.bubble .face {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 80%;
+}
+.bubble.fidget .face {
+  animation: breathe 1.6s ease-in-out 1;
+}
+@keyframes breathe {
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+/* Avatar skin: a circle with the account colour as the ring */
+.skin-avatar {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 3px solid var(--c);
+  background: var(--c);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28);
+}
+.skin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #fff;
+}
+
+/* Pet skins draw outside the circle a little (ears, tail).
+   No CSS filters anywhere in the dock: they cost ~25 MB of tile memory. */
+.pet {
+  position: absolute;
+  left: -4px;
+  top: -6px;
+  width: 64px;
+  height: 64px;
+  overflow: visible;
+}
+.pet-shadow {
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.32);
+}
+@keyframes pet-blink {
+  0%,
+  40%,
+  56%,
+  100% {
+    transform: scaleY(1);
+  }
+  48% {
+    transform: scaleY(0.1);
+  }
+}
+
+/* Service glyph in the corner */
+.bubble .app {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.bubble .app svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Unread badge */
+.bubble .badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: var(--red);
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  display: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.bubble.has-count .badge {
+  display: block;
+}
+.bubble.has-dot .badge {
+  display: block;
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  top: -1px;
+  right: -1px;
+}
+
+/* Shared mood effects */
+.bubble[data-mood='excited'] .face {
+  animation: hop 1.1s ease-in-out infinite;
+}
+@keyframes hop {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-7px) scale(1.03, 0.97);
+  }
+  40% {
+    transform: translateY(0) scale(1.04, 0.95);
+  }
+}
+.bubble[data-mood='sad'] .face {
+  animation: none;
+  transform: rotate(-6deg);
+  opacity: 0.85;
+}
+.bubble[data-mood='sleepy'] .face {
+  opacity: 0.9;
+}
+.bubble.muted .face {
+  opacity: 0.75;
+}
+
+.zzz,
+.hearts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+}
+.bubble[data-mood='sleepy'] .zzz,
+.bubble.asleep .zzz {
+  display: block;
+}
+.zzz span {
+  position: absolute;
+  left: 2px;
+  top: 0;
+  color: #64748b;
+  font-weight: 800;
+  font-size: 12px;
+  text-shadow: 0 0 3px #fff, 0 0 3px #fff;
+  opacity: 0;
+}
+/* at rest: a small "z" stays visible */
+.zzz span:first-child {
+  opacity: 1;
+  transform: translate(-3px, -1px);
+}
+.bubble.fidget .zzz span {
+  animation: zzz 1.6s linear 1 both;
+}
+.bubble.fidget .zzz span:nth-child(2) {
+  animation-delay: 0.25s;
+}
+.bubble.fidget .zzz span:nth-child(3) {
+  animation-delay: 0.5s;
+}
+@keyframes zzz {
+  0% {
+    transform: translate(0, 8px) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-10px, -16px) scale(1.2);
+    opacity: 0;
+  }
+}
+.bubble[data-mood='happy'] .hearts {
+  display: block;
+}
+.hearts span {
+  position: absolute;
+  bottom: 30px;
+  left: 22px;
+  color: #f43f5e;
+  font-size: 13px;
+  opacity: 0;
+  animation: heart 2.2s ease-out infinite;
+}
+.hearts span:nth-child(2) {
+  left: 8px;
+  animation-delay: 0.6s;
+}
+.hearts span:nth-child(3) {
+  left: 36px;
+  animation-delay: 1.2s;
+}
+@keyframes heart {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-34px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Open account gets a soft halo */
+.bubble.open::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid var(--c);
+  opacity: 0.55;
+}
+
+/* Merged "hub" bubble and the "+" bubble */
+.bubble.hub .face,
+.bubble.add .face {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #ec4899);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.28);
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.bubble.add .face {
+  background: #fff;
+  color: #6366f1;
+  border: 3px dashed #6366f1;
+  box-sizing: border-box;
+  font-size: 30px;
+  font-weight: 300;
+}
+.hub-icon {
+  width: 30px;
+  height: 30px;
+}
+
+/* ---------- preview card ---------- */
+#preview {
+  position: absolute;
+  width: calc(var(--preview) - 12px);
+  box-sizing: border-box;
+  background: var(--card-bg);
+  color: var(--card-fg);
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.26);
+  border-top: 4px solid var(--c, #6366f1);
+  padding: 10px 12px 8px;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.15s, transform 0.15s;
+}
+#preview.shown {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+body.edge-right #preview {
+  right: calc(var(--column) - 4px);
+  transform-origin: right top;
+}
+body.edge-left #preview {
+  left: calc(var(--column) - 4px);
+  transform-origin: left top;
+}
+#preview .head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+#preview .head b {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#preview .head .sub {
+  color: var(--card-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+#preview .item {
+  padding: 6px 4px;
+  border-top: 1px solid var(--card-line);
+  border-radius: 6px;
+}
+#preview .item:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+#preview .item .t {
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+#preview .item .t span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#preview .item .time {
+  color: var(--card-muted);
+  font-weight: 400;
+  font-size: 11px;
+  white-space: nowrap;
+}
+#preview .item .b {
+  color: var(--card-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+#preview .empty {
+  color: var(--card-muted);
+  padding: 4px 0 6px;
+}
+#preview .foot {
+  color: var(--card-muted);
+  font-size: 11px;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* ---------- motion controls ---------- */
+body.paused *,
+body.paused *::before,
+body.paused *::after {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .zzz span {
+    opacity: 1;
+    transform: translate(-4px, -2px);
+  }
+  .zzz span:nth-child(n + 2) {
+    display: none;
+  }
+  .hearts span {
+    opacity: 1;
+    transform: translateY(-14px);
+  }
+}
