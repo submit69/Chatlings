@@ -1,10 +1,11 @@
-// Preload for Bongbong's own pages (dock, popup bar, lock, picker, settings).
+// Preload for Chatlings' own pages (dock, popup bar, lock, picker, settings).
 // Only the fixed channel names below can be used.
 const { contextBridge, ipcRenderer } = require('electron');
 
 const SEND = new Set([
   'dock:hover', 'dock:click', 'dock:context', 'dock:dragMove', 'dock:dragEnd', 'dock:size', 'dock:previewClick', 'dock:hubContext',
-  'bar:pin', 'bar:close', 'bar:reload', 'bar:menu',
+  'bar:pin', 'bar:close', 'bar:reload', 'bar:menu', 'bar:full', 'bar:min', 'bar:max',
+  'side:select', 'side:add', 'side:settings', 'side:context',
   'win:close',
 ]);
 const INVOKE = new Set([
@@ -13,7 +14,7 @@ const INVOKE = new Set([
   'settings:get', 'settings:set', 'account:update', 'account:action', 'account:move',
   'pin:set', 'pin:clear', 'mem:sample', 'sound:pickFile', 'sound:test', 'updates:check', 'app:openExternal',
 ]);
-const ON = new Set(['bb:state', 'dock:play', 'dock:peek', 'bar:state', 'lock:state', 'settings:refresh']);
+const ON = new Set(['bb:state', 'dock:play', 'dock:peek', 'side:state', 'bar:state', 'lock:state', 'settings:refresh']);
 
 contextBridge.exposeInMainWorld('bb', {
   send(ch, data) {

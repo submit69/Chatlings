@@ -1,4 +1,4 @@
-// Small helpers shared by Bongbong's own pages (no framework).
+// Small helpers shared by Chatlings' own pages (no framework).
 (function () {
   'use strict';
   let dict = {};

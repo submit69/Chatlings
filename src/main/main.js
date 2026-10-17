@@ -3,17 +3,18 @@ const fs = require('fs');
 const path = require('path');
 const { app, ipcMain, Menu, dialog, shell, powerMonitor, screen, BrowserWindow } = require('electron');
 
-if (process.env.BONGBONG_USERDATA) app.setPath('userData', path.resolve(process.env.BONGBONG_USERDATA));
+if (process.env.CHATLINGS_USERDATA) app.setPath('userData', path.resolve(process.env.CHATLINGS_USERDATA));
+else require('./migrate').migrateFromBongbong(path.join(app.getPath('appData'), 'Bongbong'), app.getPath('userData'));
 
 // Must be decided before the app is ready, so read the setting straight from disk.
 function earlySettings() {
   try {
-    return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'bongbong.json'), 'utf8')).settings || {};
+    return JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'chatlings.json'), 'utf8')).settings || {};
   } catch {
     return {};
   }
 }
-const gpuEnv = process.env.BONGBONG_NO_GPU;
+const gpuEnv = process.env.CHATLINGS_NO_GPU;
 if (gpuEnv === '1' || (gpuEnv !== '0' && !earlySettings().hardwareAcceleration)) app.disableHardwareAcceleration();
 
 const registry = require('../adapters');
@@ -37,23 +38,23 @@ const { t } = i18n;
 
 // Log main-process errors instead of Electron's default modal dialog, which
 // can block quitting and is confusing for a tray app.
-process.on('uncaughtException', (e) => console.error('[bongbong] uncaught', e));
-process.on('unhandledRejection', (e) => console.error('[bongbong] unhandled rejection', e));
+process.on('uncaughtException', (e) => console.error('[chatlings] uncaught', e));
+process.on('unhandledRejection', (e) => console.error('[chatlings] unhandled rejection', e));
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  app.setAppUserModelId('io.github.submit69.bongbong');
+  app.setAppUserModelId('io.github.submit69.chatlings');
   app.userAgentFallback = chromeUA();
   app.whenReady().then(start);
 }
 
-// Exposed for tests (BONGBONG_FAKE=1 only) and the RAM report.
+// Exposed for tests (CHATLINGS_FAKE=1 only) and the RAM report.
 const ctx = { t };
 
 function start() {
   Menu.setApplicationMenu(null);
-  const store = createStore(path.join(app.getPath('userData'), 'bongbong.json'));
+  const store = createStore(path.join(app.getPath('userData'), 'chatlings.json'));
   ctx.store = store;
   seedFakeAccounts(store);
   i18n.setLocale(i18n.pickLocale(store.settings.locale, app.getLocale()));
@@ -74,11 +75,21 @@ function start() {
       accounts.syncAudio();
       pushState();
     },
-    onBarAction: () => {},
+    // Focus / minimise of the full window decides whether bubbles are shown.
+    onWindowState: () => {
+      updateDockVisibility();
+      accounts.syncAudio();
+      pushState();
+    },
+    getFullBounds: () => store.data.fullWindow || null,
+    setFullBounds: (b) => {
+      store.data.fullWindow = b;
+      store.save();
+    },
   });
   popup.win.on('resized', () => {
     const id = popup.currentId();
-    if (!id) return;
+    if (!id || popup.mode() !== 'compact') return;
     const [width, height] = popup.win.getSize();
     store.updateAccount(id, { popupSize: { width, height } });
   });
@@ -108,7 +119,7 @@ function start() {
     isProtectionOn: () => !!store.settings.contentProtection,
     isHideOnPresentation: () => !!store.settings.hideOnPresentation,
     onPresentation: (hidden) => {
-      if (hidden && !store.settings.popupPinned) popup.hide();
+      if (hidden && popup.mode() === 'compact' && !store.settings.popupPinned) popup.hide();
       updateDockVisibility();
     },
   });
@@ -128,6 +139,7 @@ function start() {
     pushTimer = setTimeout(() => {
       pushTimer = null;
       dock.send('bb:state', dockState());
+      popup.sendSidebar(sidebarState());
       if (ctx.tray) ctx.tray.rebuild();
       updateDockVisibility();
     }, 60);
@@ -181,8 +193,35 @@ function start() {
     };
   }
 
+  // Bubbles hide while you are using the full window; minimise it or switch to
+  // another app and they come back.
   function updateDockVisibility() {
-    dock.setVisible(!store.settings.hideAll && !privacy.isHiddenForPresentation());
+    const usingFullApp = popup.isFullOpen() && popup.isActive();
+    dock.setVisible(!store.settings.hideAll && !privacy.isHiddenForPresentation() && !usingFullApp);
+  }
+
+  function sidebarState() {
+    const locked = lock.isLocked();
+    return {
+      current: popup.currentId(),
+      locked,
+      accounts: store.accounts().map((a) => {
+        const st = accounts.state(a.id);
+        const ad = registry.get(a.adapter);
+        return {
+          id: a.id,
+          name: a.name,
+          color: a.color,
+          adapterName: ad.name,
+          icon: ad.icon,
+          iconColor: ad.color,
+          avatar: st.profile && st.profile.avatarData ? st.profile.avatarData : null,
+          count: locked ? null : st.count,
+          dot: st.dot,
+          asleep: !st.awake,
+        };
+      }),
+    };
   }
 
   accounts.on('changed', () => pushState());
@@ -193,7 +232,7 @@ function start() {
     pushState();
     // Show the preview card by itself for a few seconds. Not while chatting in
     // the popup, and never the chat popup itself: that would steal the keyboard.
-    if (store.settings.autoPeek && !store.settings.hideAll && !popup.isVisible() && previewFor(id)) {
+    if (store.settings.autoPeek && !store.settings.hideAll && !popup.isActive() && previewFor(id)) {
       setTimeout(() => dock.send('dock:peek', { id, ms: 6000 }), 150);
     }
   });
@@ -202,6 +241,8 @@ function start() {
   function openAccount(id, anchorTop) {
     const account = store.account(id);
     if (!account) return;
+    // The full window is open (maybe minimised or behind Excel): bring it back.
+    if (popup.isFullOpen()) return openFull(id);
     if (popup.isVisible() && popup.currentId() === id) {
       popup.hide();
       return;
@@ -217,6 +258,27 @@ function start() {
     popup.show({ id, view, account, adapter: ad, bounds, locked: lock.isLocked() });
   }
   ctx.openAccount = (id) => openAccount(id);
+
+  /** The full app window: account sidebar + big chat area. */
+  function openFull(id) {
+    const list = store.accounts();
+    if (!list.length) return addAccount();
+    const pick = store.account(id) || store.account(popup.currentId()) || list.find((a) => !a.hidden) || list[0];
+    const ad = registry.get(pick.adapter);
+    const view = accounts.wake(pick.id, 'open');
+    let bounds = null;
+    const fb = store.data.fullWindow;
+    const wa = screen.getDisplayMatching(fb && fb.width ? fb : dock.bounds()).workArea;
+    if (fb && fb.width && fb.height) {
+      bounds = { x: fb.x, y: fb.y, width: Math.min(fb.width, wa.width), height: Math.min(fb.height, wa.height) };
+    } else {
+      const width = Math.min(1240, Math.round(wa.width * 0.85));
+      const height = Math.min(820, Math.round(wa.height * 0.9));
+      bounds = { x: wa.x + Math.round((wa.width - width) / 2), y: wa.y + Math.round((wa.height - height) / 2), width, height };
+    }
+    popup.show({ id: pick.id, view, account: pick, adapter: ad, bounds, locked: lock.isLocked(), mode: 'full' });
+  }
+  ctx.openFull = (id) => openFull(id);
 
   function addAccount() {
     picker.openPicker({ title: t('picker.title'), protect: (w) => privacy.protect(w) });
@@ -280,7 +342,7 @@ function start() {
         openAccount(id);
         break;
       case 'sleep':
-        if (popup.currentId() === id) popup.hide();
+        if (popup.currentId() === id && popup.mode() === 'compact') popup.hide();
         accounts.sleep(id, { manual: true });
         break;
       case 'wake':
@@ -298,6 +360,7 @@ function start() {
         if (!(await confirm(t('confirm.remove', { name: a.name }), t('confirm.removeDetail'), t('menu.remove')))) return false;
         if (popup.currentId() === id) popup.hide();
         await accounts.remove(id);
+        if (popup.mode() === 'full' && store.accounts().length) openFull();
         break;
       default:
         return false;
@@ -433,7 +496,7 @@ function start() {
   ipcMain.handle('dock:dragStart', (e) => (fromDock(e) ? dock.dragStart() : null));
   ipcMain.on('dock:dragMove', (e, p) => {
     if (!fromDock(e) || !p) return;
-    if (popup.isVisible() && !store.settings.popupPinned) popup.hide();
+    if (popup.isVisible() && popup.mode() === 'compact' && !store.settings.popupPinned) popup.hide();
     dock.dragMove(p);
   });
   ipcMain.on('dock:dragEnd', (e) => fromDock(e) && dock.dragEnd());
@@ -450,6 +513,16 @@ function start() {
 
   ipcMain.on('bar:pin', () => setSetting('popupPinned', !store.settings.popupPinned));
   ipcMain.on('bar:close', () => popup.hide());
+  ipcMain.on('bar:min', () => popup.minimize());
+  ipcMain.on('bar:max', () => popup.toggleMaximize());
+  ipcMain.on('bar:full', () => openFull(popup.currentId()));
+  ipcMain.on('side:select', (_e, id) => openFull(String(id)));
+  ipcMain.on('side:add', () => addAccount());
+  ipcMain.on('side:settings', () => openSettings());
+  ipcMain.on('side:context', (_e, id) => {
+    const m = accountMenu(String(id));
+    if (m) m.popup();
+  });
   ipcMain.on('bar:reload', () => popup.currentId() && accounts.reload(popup.currentId()));
   ipcMain.on('bar:menu', () => {
     const m = popup.currentId() && accountMenu(popup.currentId());
@@ -549,7 +622,7 @@ function start() {
   });
   ipcMain.handle('updates:check', () => updater.check({ interactive: true }));
   ipcMain.handle('app:openExternal', (_e, url) => {
-    const ok = /^https:\/\/(github\.com\/submit69\/bongbongzalo|github\.com\/simple-icons)/.test(String(url));
+    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons)/.test(String(url));
     if (ok) shell.openExternal(String(url));
     return ok;
   });
@@ -575,15 +648,16 @@ function start() {
     pushState();
   });
 
+  // Starting Chatlings again (Start menu, desktop icon) opens the full app.
   app.on('second-instance', () => {
     setSetting('hideAll', false);
-    if (!store.accounts().length) addAccount();
-    else openSettings();
+    openFull();
   });
   app.on('window-all-closed', () => {
     // Tray app: keep running.
   });
   app.on('before-quit', () => {
+    popup.allowClose();
     // Stop every timer first: a tick running while windows are being destroyed
     // would throw, and Electron's error dialog would then block the exit.
     quitting = true;
@@ -605,23 +679,26 @@ function start() {
   setTimeout(() => (memory.sample(), ctx.tray.rebuild()), 20000);
 
   if (!store.accounts().length && !registry.isFake()) addAccount();
+  // Opening the app shows the full window; starting with Windows (--hidden)
+  // only shows the bubbles.
+  else if (!registry.isFake() && !process.argv.includes('--hidden')) openFull();
   if (store.settings.checkUpdates && app.isPackaged) {
     setTimeout(() => updater.check({ interactive: false }), 60 * 1000);
     setInterval(() => updater.check({ interactive: false }), 24 * 3600 * 1000);
   }
 
   // Test hooks: only with fake chats, or for scripts/check-adapters.mjs.
-  if (registry.isFake() || process.env.BONGBONG_EXPOSE === '1') {
+  if (registry.isFake() || process.env.CHATLINGS_EXPOSE === '1') {
     ctx.lib = { layout, hashPin, newAccount, registry };
-    globalThis.__bongbong = ctx;
+    globalThis.__chatlings = ctx;
   }
-  if (process.env.BONGBONG_MEMREPORT) memReport(Number(process.env.BONGBONG_MEMREPORT) || 25);
+  if (process.env.CHATLINGS_MEMREPORT) memReport(Number(process.env.CHATLINGS_MEMREPORT) || 25);
 }
 
-/** BONGBONG_FAKE=1 BONGBONG_FAKE_ACCOUNTS=N: create N fake accounts on an empty profile. */
+/** CHATLINGS_FAKE=1 CHATLINGS_FAKE_ACCOUNTS=N: create N fake accounts on an empty profile. */
 function seedFakeAccounts(store) {
   if (!registry.isFake() || store.accounts().length) return;
-  const n = Number(process.env.BONGBONG_FAKE_ACCOUNTS || 3);
+  const n = Number(process.env.CHATLINGS_FAKE_ACCOUNTS || 3);
   const apps = ['zalo', 'whatsapp', 'discord', 'telegram', 'messenger'];
   const modes = ['title', 'dom', 'favicon', 'notify'];
   const skins = ['cat', 'dog', 'avatar'];
@@ -630,7 +707,7 @@ function seedFakeAccounts(store) {
     const acc = newAccount(ad, store.accounts());
     acc.fakeMode = modes[i % modes.length];
     acc.skin = skins[i % skins.length];
-    if (process.env.BONGBONG_FAKE_SLEEP === '1') acc.sleepMode = 'idle';
+    if (process.env.CHATLINGS_FAKE_SLEEP === '1') acc.sleepMode = 'idle';
     store.addAccount(acc);
   }
   store.flush();
@@ -649,7 +726,7 @@ function memReport(seconds) {
     const s = ctx.memory.sample();
     const accounts = ctx.store.accounts().map((a) => ({ id: a.id, adapter: a.adapter, awake: ctx.accounts.state(a.id).awake, mb: s.accounts[a.id] || 0 }));
     const metrics = app.getAppMetrics().map((m) => ({ pid: m.pid, type: m.type, account: ctx.accounts.pidMap().get(m.pid) || ownPids().get(m.pid) || null, mb: Math.round(kb(m) / 1024), workingSetMB: Math.round(m.memory.workingSetSize / 1024) }));
-    process.stdout.write('BONGBONG_MEM ' + JSON.stringify({ ...s, accounts, metrics }) + '\n');
+    process.stdout.write('CHATLINGS_MEM ' + JSON.stringify({ ...s, accounts, metrics }) + '\n');
     app.quit();
   }, seconds * 1000);
 }

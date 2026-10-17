@@ -151,7 +151,7 @@
     push();
     await caption('Replied fast → happy cat');
     await sleep(2300);
-    await caption('Bongbong · free & open source');
+    await caption('Chatlings · free & open source');
     await sleep(1800);
     document.title = 'DONE';
   }

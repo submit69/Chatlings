@@ -1,5 +1,5 @@
 'use strict';
-// 1. Content protection: every Bongbong window calls setContentProtection(true).
+// 1. Content protection: every Chatlings window calls setContentProtection(true).
 //    On Windows 10 2004+ this sets WDA_EXCLUDEFROMCAPTURE, so the windows are
 //    left out of screenshots, recordings and screen sharing (Meet, Zoom, Teams,
 //    OBS), while you still see them. No need to guess which app is sharing.

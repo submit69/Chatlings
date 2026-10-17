@@ -1,7 +1,7 @@
 // Preload for every chat view (sandboxed, context-isolated). Shared by all
 // adapters; the adapter id arrives via additionalArguments.
 //  - watches the tab title and favicon (MutationObserver + 2 s poll fallback)
-//  - replaces window.Notification so messages go to Bongbong (preview card,
+//  - replaces window.Notification so messages go to Chatlings (preview card,
 //    per-account sound) instead of the Windows notification centre
 // Nothing is exposed to the page except the Notification replacement.
 const { contextBridge, ipcRenderer } = require('electron');
@@ -72,7 +72,7 @@ function hook(notify, marker) {
       return Promise.resolve([]);
     };
   }
-  // Bongbong's preview card was clicked: behave as if the toast was clicked.
+  // Chatlings' preview card was clicked: behave as if the toast was clicked.
   window.addEventListener('message', (ev) => {
     const d = ev.data;
     if (!d || d[marker] !== 'click') return;
@@ -81,14 +81,14 @@ function hook(notify, marker) {
   });
 }
 
-const MARKER = '__bongbong_' + Math.random().toString(36).slice(2);
+const MARKER = '__chatlings_' + Math.random().toString(36).slice(2);
 const send = (p) => ipcRenderer.send('chat:notify', p);
 try {
   contextBridge.executeInMainWorld({ func: hook, args: [send, MARKER] });
 } catch (e) {
   // Older Electron: fall back to a bridged callback.
-  contextBridge.exposeInMainWorld('__bongbongNotify', send);
-  console.warn('[bongbong] executeInMainWorld unavailable', e && e.message);
+  contextBridge.exposeInMainWorld('__chatlingsNotify', send);
+  console.warn('[chatlings] executeInMainWorld unavailable', e && e.message);
 }
 
 ipcRenderer.on('chat:clickNotification', (_e, nid) => {

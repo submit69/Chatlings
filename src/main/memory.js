@@ -23,7 +23,7 @@ function kb(m) {
 }
 
 /**
- * Splits app.getAppMetrics() into per-account and "frame" (Bongbong itself).
+ * Splits app.getAppMetrics() into per-account and "frame" (Chatlings itself).
  * @param metrics  Electron ProcessMetric[] (memory sizes in KB)
  * @param pidToAccount Map<pid, accountId>
  */

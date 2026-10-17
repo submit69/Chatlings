@@ -2,7 +2,7 @@
 const { defineAdapter } = require('../common');
 const selectors = require('./selectors');
 
-// Title format: "(3) WhatsApp". Requires a current Chrome user agent, which Bongbong always sets.
+// Title format: "(3) WhatsApp". Requires a current Chrome user agent, which Chatlings always sets.
 module.exports = defineAdapter({
   id: 'whatsapp',
   name: 'WhatsApp',

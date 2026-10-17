@@ -19,7 +19,7 @@ function createTray(ctx) {
   const { t } = ctx;
   const icons = { normal: img('tray.png'), unread: img('tray-unread.png') };
   const tray = new Tray(icons.normal);
-  tray.setToolTip('Bongbong');
+  tray.setToolTip('Chatlings');
   let timer = null;
 
   function accountItems() {
@@ -72,7 +72,7 @@ function createTray(ctx) {
       { label: t('tray.memRefresh'), click: () => (ctx.memory.sample(), rebuild()) },
     ];
     const menu = Menu.buildFromTemplate([
-      { label: 'Bongbong', enabled: false },
+      { label: t('tray.openApp'), click: () => ctx.openFull() },
       { type: 'separator' },
       ...accountItems(),
       { type: 'separator' },
@@ -115,7 +115,7 @@ function createTray(ctx) {
     tray.setContextMenu(menu);
     const tot = total(ctx.store.accounts().map((a) => ctx.accounts.state(a.id)));
     tray.setImage(tot.dot ? icons.unread : icons.normal);
-    tray.setToolTip(tot.count ? `Bongbong — ${tot.count}` : 'Bongbong');
+    tray.setToolTip(tot.count ? `Chatlings — ${tot.count}` : 'Chatlings');
   }
 
   function rebuild() {
@@ -123,7 +123,8 @@ function createTray(ctx) {
     timer = setTimeout(build, 300);
   }
 
-  tray.on('click', () => tray.popUpContextMenu());
+  // Left click opens the app, right click shows the menu.
+  tray.on('click', () => ctx.openFull());
   build();
   return { tray, rebuild, build };
 }

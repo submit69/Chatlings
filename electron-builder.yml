@@ -1,6 +1,6 @@
-appId: io.github.submit69.bongbong
-productName: Bongbong
-copyright: Copyright © 2026 Bongbong contributors
+appId: io.github.submit69.chatlings
+productName: Chatlings
+copyright: Copyright © 2026 Chatlings contributors
 directories:
   output: dist
   buildResources: build
@@ -23,18 +23,18 @@ win:
       arch: [x64]
     - target: portable
       arch: [x64]
-  artifactName: Bongbong-${version}-${arch}-${os}.${ext}
+  artifactName: Chatlings-${version}-${arch}-${os}.${ext}
 nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
-  shortcutName: Bongbong
-  artifactName: Bongbong-Setup-${version}.${ext}
+  shortcutName: Chatlings
+  artifactName: Chatlings-Setup-${version}.${ext}
 portable:
-  artifactName: Bongbong-${version}-portable.${ext}
+  artifactName: Chatlings-${version}-portable.${ext}
 publish:
   provider: github
   owner: submit69
-  repo: bongbongzalo
+  repo: chatlings
   releaseType: release

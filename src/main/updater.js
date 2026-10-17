@@ -6,7 +6,7 @@ const { app, dialog, shell, net } = require('electron');
 const { t } = require('./i18n');
 
 const OWNER = 'submit69';
-const REPO = 'bongbongzalo';
+const REPO = 'chatlings';
 const RELEASES = `https://github.com/${OWNER}/${REPO}/releases/latest`;
 
 function newer(a, b) {

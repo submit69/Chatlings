@@ -22,6 +22,11 @@
   "bar.reload": "Tải lại (F5)",
   "bar.pin": "Ghim, không tự ẩn",
   "bar.unpin": "Tự ẩn khi bấm ra ngoài",
+  "bar.full": "Mở app đầy đủ",
+  "bar.min": "Thu nhỏ",
+  "bar.max": "Phóng to",
+  "bar.restore": "Thu về",
+  "tray.openApp": "Mở Chatlings",
   "bar.close": "Đóng",
 
   "tray.noAccounts": "Chưa có tài khoản",
@@ -42,7 +47,7 @@
   "tray.lockNow": "Khoá ngay",
   "tray.memory": "Bộ nhớ",
   "tray.memTotal": "Tổng: {mb} MB",
-  "tray.memFrame": "Riêng Bongbong: {mb} MB",
+  "tray.memFrame": "Riêng Chatlings: {mb} MB",
   "tray.memRefresh": "Làm mới",
   "tray.asleep": "đang ngủ",
   "tray.sleepNow": "Ngủ ngay",
@@ -50,7 +55,7 @@
   "tray.settings": "Cài đặt…",
   "tray.autoLaunch": "Khởi động cùng Windows",
   "tray.checkUpdates": "Kiểm tra cập nhật",
-  "tray.quit": "Thoát Bongbong",
+  "tray.quit": "Thoát Chatlings",
 
   "group.work": "Công việc",
   "group.personal": "Cá nhân",
@@ -115,9 +120,9 @@
   "confirm.remove": "Xoá {name}?",
   "confirm.removeDetail": "Bong bóng và đăng nhập đã lưu của tài khoản này sẽ bị xoá. Tin nhắn vẫn còn trên dịch vụ.",
 
-  "picker.title": "Thêm tài khoản — Bongbong",
+  "picker.title": "Thêm tài khoản — Chatlings",
   "picker.heading": "Thêm tài khoản",
-  "picker.sub": "Chọn app. Bạn đăng nhập trên trang web chính thức của app, ngay trong Bongbong. Muốn nhiều nick thì thêm cùng một app nhiều lần.",
+  "picker.sub": "Chọn app. Bạn đăng nhập trên trang web chính thức của app, ngay trong Chatlings. Muốn nhiều nick thì thêm cùng một app nhiều lần.",
   "picker.tier1": "Hỗ trợ đầy đủ",
   "picker.tier2": "App khác",
   "picker.beta": "beta",
@@ -133,9 +138,9 @@
   "picker.loginPassword": "Đăng nhập trên trang web",
   "picker.unsupported": "Không làm được (không có bản web):",
   "picker.unsupportedList": "LINE, Viber, Signal, KakaoTalk. WeChat Web chặn phần lớn tài khoản mới.",
-  "picker.privacyNote": "Bongbong không liên kết với dịch vụ nào trong danh sách. Đăng nhập chỉ lưu trên máy này; Bongbong không gửi dữ liệu đi đâu cả.",
+  "picker.privacyNote": "Chatlings không liên kết với dịch vụ nào trong danh sách. Đăng nhập chỉ lưu trên máy này; Chatlings không gửi dữ liệu đi đâu cả.",
 
-  "lock.title": "Bongbong đang khoá",
+  "lock.title": "Chatlings đang khoá",
   "lock.sub": "Nhập PIN để mở các cuộc trò chuyện.",
   "lock.unlock": "Mở khoá",
   "lock.wrong": "Sai PIN. Còn {n} lần thử.",
@@ -143,15 +148,15 @@
   "lock.invalid": "PIN phải gồm 4 đến 8 chữ số.",
   "lock.wrongOld": "PIN hiện tại không đúng.",
 
-  "update.available": "Đã có Bongbong {version}.",
+  "update.available": "Đã có Chatlings {version}.",
   "update.open": "Mở trang tải",
-  "update.downloading": "Đang tải Bongbong {version} ở chế độ nền…",
-  "update.ready": "Bongbong {version} đã sẵn sàng. Khởi động lại để cập nhật?",
+  "update.downloading": "Đang tải Chatlings {version} ở chế độ nền…",
+  "update.ready": "Chatlings {version} đã sẵn sàng. Khởi động lại để cập nhật?",
   "update.restart": "Khởi động lại",
   "update.none": "Bạn đang dùng bản mới nhất ({version}).",
   "update.failed": "Không kiểm tra được cập nhật.",
 
-  "settings.title": "Cài đặt — Bongbong",
+  "settings.title": "Cài đặt — Chatlings",
   "settings.tab.general": "Chung",
   "settings.tab.accounts": "Tài khoản",
   "settings.tab.privacy": "Riêng tư & PIN",
@@ -168,7 +173,7 @@
   "settings.checkUpdatesHint": "Hỏi GitHub Releases mỗi ngày một lần. Không gửi gì khác.",
   "settings.spellcheck": "Kiểm tra chính tả khi gõ",
   "settings.gpu": "Tăng tốc phần cứng (GPU)",
-  "settings.gpuHint": "Tắt giúp tiết kiệm khoảng 60 MB RAM. Bật lên nếu gọi video hoặc hoạt hình bị giật. Có hiệu lực sau khi khởi động lại Bongbong.",
+  "settings.gpuHint": "Tắt giúp tiết kiệm khoảng 60 MB RAM. Bật lên nếu gọi video hoặc hoạt hình bị giật. Có hiệu lực sau khi khởi động lại Chatlings.",
   "settings.groupHint": "Bật/tắt cả nhóm hồ sơ.",
   "settings.dndOff": "Đang tắt",
 
@@ -190,7 +195,7 @@
   "settings.acc.hours": "Giờ",
   "settings.acc.outside": "Ngoài giờ",
 
-  "settings.captureHint": "Cửa sổ Bongbong không lọt vào ảnh chụp, video quay và chia sẻ màn hình (Meet, Zoom, Teams, OBS). Bạn vẫn thấy bình thường. Tắt đi nếu muốn chụp màn hình bong bóng.",
+  "settings.captureHint": "Cửa sổ Chatlings không lọt vào ảnh chụp, video quay và chia sẻ màn hình (Meet, Zoom, Teams, OBS). Bạn vẫn thấy bình thường. Tắt đi nếu muốn chụp màn hình bong bóng.",
   "settings.presentHint": "Ẩn bong bóng khi Windows báo đang trình chiếu hoặc chơi game toàn màn hình. Excel phóng to không tính.",
   "settings.pin.title": "Khoá bằng PIN",
   "settings.pin.warning": "PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN không mã hoá dữ liệu đăng nhập.",
@@ -210,7 +215,7 @@
 
   "settings.mem.truth": "RAM chủ yếu nằm ở chính các trang web chat: mỗi tài khoản đang thức là một tiến trình trình duyệt riêng, vì tách đăng nhập thì bắt buộc phải tách tiến trình. Cho tài khoản ngủ để giải phóng RAM.",
   "settings.mem.total": "Tổng",
-  "settings.mem.frame": "Riêng Bongbong",
+  "settings.mem.frame": "Riêng Chatlings",
   "settings.mem.account": "Tài khoản",
   "settings.mem.app": "App",
   "settings.mem.state": "Trạng thái",
@@ -221,9 +226,9 @@
 
   "about.tagline": "Bong bóng chat nổi cho các app chat web. Nhiều tài khoản, mã nguồn mở.",
   "about.privacy": "Riêng tư",
-  "about.privacyText": "Không telemetry, không analytics, không có máy chủ riêng. Bongbong chỉ kết nối tới các trang chat bạn thêm và GitHub Releases để cập nhật.",
+  "about.privacyText": "Không telemetry, không analytics, không có máy chủ riêng. Chatlings chỉ kết nối tới các trang chat bạn thêm và GitHub Releases để cập nhật.",
   "about.source": "Mã nguồn",
   "about.license": "Giấy phép",
   "about.licenseText": "MIT. Icon dịch vụ từ simple-icons (CC0).",
-  "about.disclaimer": "Bongbong không liên kết, không được bảo trợ và không có quan hệ với Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi nhãn hiệu thuộc về chủ sở hữu."
+  "about.disclaimer": "Chatlings không liên kết, không được bảo trợ và không có quan hệ với Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi nhãn hiệu thuộc về chủ sở hữu."
 }

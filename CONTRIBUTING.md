@@ -5,10 +5,10 @@ Thanks for helping! The two easiest and most useful contributions are **a new ap
 ## Setup
 
 ```bash
-git clone https://github.com/submit69/bongbongzalo.git
-cd bongbongzalo
+git clone https://github.com/submit69/chatlings.git
+cd chatlings
 npm install          # Node 22 or newer
-npm start            # run Bongbong
+npm start            # run Chatlings
 npm run fake         # run it with fake chat pages, in a throw-away profile
 npm test             # unit tests (node:test)
 npm run e2e          # end-to-end test in real windows (~1 min)
@@ -69,7 +69,7 @@ Rules and tips:
 - **Unread counting has three tiers.** (1) the tab title, (2) `unreadFromDom` with your `selectors.unreadBadge`, (3) a dot when the favicon changes or a notification arrives. The title is the most reliable; selectors break when the site redesigns.
 - `unreadFromDom` and `profileFromDom` are **serialised into the page** (`fn.toString()`), so if you write your own they must not use anything outside their argument.
 - If sign-in goes through Google / Microsoft / Apple, spread `SSO.google` etc. into `allowedHosts` (see `slack/index.js`).
-- Icons: monochrome glyphs from [simple-icons](https://simpleicons.org) (CC0) are fine. If a brand is not there, use `{ text: 'X' }`. Never use a logo as Bongbong's own branding.
+- Icons: monochrome glyphs from [simple-icons](https://simpleicons.org) (CC0) are fine. If a brand is not there, use `{ text: 'X' }`. Never use a logo as Chatlings' own branding.
 - Run `npm test`. It checks that every adapter has the required fields and that `allowedHosts` covers the URL.
 - Run `node scripts/check-adapters.mjs myapp` to open the real login page and make sure it is not blocked as an unsupported browser.
 - In the PR, say what you verified with a real account (title format, selectors, profile) and what you could not.

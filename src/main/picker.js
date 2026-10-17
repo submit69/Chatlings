@@ -1,5 +1,5 @@
 'use strict';
-// Small framed windows for Bongbong's own pages: the "add account" picker and
+// Small framed windows for Chatlings' own pages: the "add account" picker and
 // Settings. One instance each.
 const path = require('path');
 const { BrowserWindow } = require('electron');

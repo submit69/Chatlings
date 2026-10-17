@@ -8,8 +8,9 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const { createStore, newAccount, withDefaults, DEFAULTS, COLORS } = require('../src/main/store.js');
 const L = require('../src/main/layout.js');
+const { migrateFromBongbong } = require('../src/main/migrate.js');
 
-const tmp = () => path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bb-store-')), 'bongbong.json');
+const tmp = () => path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'bb-store-')), 'chatlings.json');
 const zalo = { id: 'zalo', name: 'Zalo', sleepMode: 'always' };
 
 test('withDefaults fills missing keys and keeps user values', () => {
@@ -102,4 +103,31 @@ test('popup sits on the inner side and inside the work area', () => {
 test('isDrag needs more than 4 px', () => {
   assert.equal(L.isDrag(4, 0), false);
   assert.equal(L.isDrag(0, -5), true);
+});
+
+test('data from the old Bongbong folder moves to the new one, logins included', () => {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'bb-mig-'));
+  const oldDir = path.join(base, 'Bongbong');
+  const newDir = path.join(base, 'Chatlings');
+  fs.mkdirSync(path.join(oldDir, 'Partitions', 'zalo-1'), { recursive: true });
+  fs.writeFileSync(path.join(oldDir, 'Partitions', 'zalo-1', 'Cookies'), 'c');
+  fs.writeFileSync(path.join(oldDir, 'bongbong.json'), '{"accounts":[{"id":"zalo-1"}]}');
+  const moved = migrateFromBongbong(oldDir, newDir);
+  assert.deepEqual(moved.sort(), ['Partitions', 'bongbong.json']);
+  assert.equal(fs.readFileSync(path.join(newDir, 'chatlings.json'), 'utf8'), '{"accounts":[{"id":"zalo-1"}]}');
+  assert.ok(fs.existsSync(path.join(newDir, 'Partitions', 'zalo-1', 'Cookies')));
+  assert.ok(!fs.existsSync(oldDir), 'empty old folder removed');
+  assert.deepEqual(migrateFromBongbong(oldDir, newDir), [], 'second run does nothing');
+});
+
+test('migration never overwrites an existing Chatlings profile', () => {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'bb-mig-'));
+  const oldDir = path.join(base, 'Bongbong');
+  const newDir = path.join(base, 'Chatlings');
+  fs.mkdirSync(oldDir);
+  fs.mkdirSync(newDir);
+  fs.writeFileSync(path.join(oldDir, 'bongbong.json'), 'old');
+  fs.writeFileSync(path.join(newDir, 'chatlings.json'), 'new');
+  assert.deepEqual(migrateFromBongbong(oldDir, newDir), []);
+  assert.equal(fs.readFileSync(path.join(newDir, 'chatlings.json'), 'utf8'), 'new');
 });

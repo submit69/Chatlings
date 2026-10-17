@@ -1,5 +1,5 @@
 'use strict';
-// Per-account notification sound. Bongbong blocks the site's own Notification
+// Per-account notification sound. Chatlings blocks the site's own Notification
 // and plays its own sound instead; the dock renderer synthesises it with
 // WebAudio (or plays the user's file). Do-not-disturb, schedule and the PIN
 // lock are checked first.

@@ -2,7 +2,7 @@
 
 <img src="build/icon.png" width="96" alt="" />
 
-# Bongbong
+# Chatlings
 
 **Chat heads for your desktop.** Zalo, Messenger, WhatsApp, Telegram, Discord and more float as bubbles on the edge of your screen. Click one to chat, click away to get back to work.
 
@@ -12,7 +12,7 @@ Several accounts at once · cat & dog bubbles · hidden from screen sharing · n
 
 <img src="docs/demo.gif" width="760" alt="Bubbles for Zalo, WhatsApp and Discord floating over a spreadsheet; a message arrives, the cat bubble jumps, hovering shows a preview, clicking opens the chat" />
 
-### [⬇ Download for Windows](https://github.com/submit69/bongbongzalo/releases/latest)
+### [⬇ Download for Windows](https://github.com/submit69/chatlings/releases/latest)
 
 </div>
 
@@ -30,9 +30,9 @@ Several accounts at once · cat & dog bubbles · hidden from screen sharing · n
 | 🧪 | Slack · Microsoft Teams (work & personal) · Google Chat · Google Messages · Instagram · X · LinkedIn · Element (Matrix) | web sign-in | title / badges (beta) |
 | ➕ | **Any other web chat**: type a name and a URL | | title |
 
-Bongbong runs each service's **official web app** inside its own isolated browser profile. No unofficial APIs, so it is as safe for your account as using the website. Add the same app several times for several accounts: two Zalo + one WhatsApp + one Discord is fine.
+Chatlings runs each service's **official web app** inside its own isolated browser profile. No unofficial APIs, so it is as safe for your account as using the website. Add the same app several times for several accounts: two Zalo + one WhatsApp + one Discord is fine.
 
-Every login page above was opened in Bongbong and loads normally (no "unsupported browser"): `npm run check-adapters`. The list-badge selectors were written from the sites' public markup and still need confirming with logged-in accounts; until then the tab title (and a dot on new notifications) does the counting. Reports and PRs welcome.
+Every login page above was opened in Chatlings and loads normally (no "unsupported browser"): `npm run check-adapters`. The list-badge selectors were written from the sites' public markup and still need confirming with logged-in accounts; until then the tab title (and a dot on new notifications) does the counting. Reports and PRs welcome.
 
 ## Features
 
@@ -51,11 +51,11 @@ Every login page above was opened in Bongbong and loads normally (no "unsupporte
 
 ## Memory, honestly
 
-Most of the RAM goes to the chat websites themselves. Each **awake** account is its own Chromium process: separate logins need separate processes. Bongbong keeps its own part small and lets you put accounts to sleep.
+Most of the RAM goes to the chat websites themselves. Each **awake** account is its own Chromium process: separate logins need separate processes. Chatlings keeps its own part small and lets you put accounts to sleep.
 
 Measured with `npm run mem-report` (private memory, like Task Manager's *Memory* column), Windows 11, Electron 44, after 30 s:
 
-| | Bongbong itself | Accounts | Total |
+| | Chatlings itself | Accounts | Total |
 |---|---:|---:|---:|
 | No accounts | 95 MB | — | 95 MB |
 | 1 account | 106 MB | 23 MB | 129 MB |
@@ -68,7 +68,7 @@ Hardware acceleration is **off** by default because it saves ~50 MB (GPU process
 
 ## Install
 
-1. Download `Bongbong-Setup-x.y.z.exe` (installer, auto-updates) or `Bongbong-x.y.z-portable.exe` from [Releases](https://github.com/submit69/bongbongzalo/releases/latest).
+1. Download `Chatlings-Setup-x.y.z.exe` (installer, auto-updates) or `Chatlings-x.y.z-portable.exe` from [Releases](https://github.com/submit69/chatlings/releases/latest).
 2. The exe is not code-signed yet, so Windows SmartScreen will warn. Click **More info → Run anyway**. You can read every line of the source before you do.
 3. Pick an app, sign in on its own page (scan the QR for Zalo / WhatsApp / Telegram). Done.
 
@@ -76,7 +76,7 @@ Right-click a bubble for skin, colour, sound, sleep mode, sign out. The tray ico
 
 ## Privacy
 
-**No telemetry, no analytics, no Bongbong server.** Bongbong only connects to the chat sites you add and, once a day, to this project's GitHub Releases to look for updates (can be turned off). Logins stay in your Windows profile. Details: [PRIVACY.md](PRIVACY.md).
+**No telemetry, no analytics, no Chatlings server.** Chatlings only connects to the chat sites you add and, once a day, to this project's GitHub Releases to look for updates (can be turned off). Logins stay in your Windows profile. Details: [PRIVACY.md](PRIVACY.md).
 
 The PIN only stops people using your PC from opening your chats. It does **not** encrypt your login data.
 
@@ -84,11 +84,11 @@ The PIN only stops people using your PC from opening your chats. It does **not**
 
 **Why not LINE, Viber, Signal, KakaoTalk?** They have no web version, so there is nothing to put in a bubble. WeChat has one, but it refuses most new accounts.
 
-**Will it log me out of the Zalo / WhatsApp app on my PC or phone?** Bongbong is just another *web* session. Zalo and WhatsApp limit how many devices can be linked to one account; if you are already at the limit, signing in here may sign out another web/desktop session of **the same account**. Different accounts never affect each other.
+**Will it log me out of the Zalo / WhatsApp app on my PC or phone?** Chatlings is just another *web* session. Zalo and WhatsApp limit how many devices can be linked to one account; if you are already at the limit, signing in here may sign out another web/desktop session of **the same account**. Different accounts never affect each other.
 
 **Google Chat says "This browser or app may not be secure".** Google sometimes blocks sign-in inside embedded browsers. That is why Google Chat is beta. Signing in through a Google Workspace SSO page usually works; if not, there is no workaround yet.
 
-**The unread number is wrong / missing for app X.** Sites change their markup. Selectors live in one file per app (`src/adapters/<app>/selectors.js`); a fix is usually a one-line PR. Bongbong always falls back to the tab title, then to a dot when the favicon changes or a notification arrives.
+**The unread number is wrong / missing for app X.** Sites change their markup. Selectors live in one file per app (`src/adapters/<app>/selectors.js`); a fix is usually a one-line PR. Chatlings always falls back to the tab title, then to a dot when the favicon changes or a notification arrives.
 
 **I want to screenshot my bubbles.** Turn off *Privacy → Hide from screen sharing* in the tray first.
 
@@ -116,6 +116,6 @@ npm run e2e      # end-to-end in real windows
 
 ## Disclaimer
 
-Bongbong is an independent open-source project. It is **not affiliated with, endorsed by or connected to** Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All names and trademarks belong to their owners; service glyphs come from [simple-icons](https://simpleicons.org) (CC0) and are used only to tell services apart.
+Chatlings is an independent open-source project. It is **not affiliated with, endorsed by or connected to** Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All names and trademarks belong to their owners; service glyphs come from [simple-icons](https://simpleicons.org) (CC0) and are used only to tell services apart.
 
-MIT © Bongbong contributors
+MIT © Chatlings contributors

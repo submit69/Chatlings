@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:" />
+    <title>Chatlings</title>
+    <style>
+      :root {
+        --bg: #eef2f7;
+        --fg: #0f172a;
+        --muted: #64748b;
+        --hover: #dfe6ef;
+        --line: #d7dee8;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111827;
+          --fg: #f1f5f9;
+          --muted: #94a3b8;
+          --hover: #1f2937;
+          --line: #1f2937;
+        }
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: var(--bg);
+        color: var(--fg);
+        font: 12px 'Segoe UI', system-ui, sans-serif;
+        user-select: none;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-right: 1px solid var(--line);
+        box-sizing: border-box;
+      }
+      .logo {
+        height: 36px;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        -webkit-app-region: drag;
+      }
+      .logo img {
+        width: 22px;
+        height: 22px;
+      }
+      #list {
+        flex: 1;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        scrollbar-width: none;
+      }
+      .acc,
+      .tool {
+        position: relative;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        flex: none;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        color: inherit;
+      }
+      .acc .pic {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border-radius: 50%;
+        border: 3px solid var(--c);
+        background: var(--c);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 16px;
+        overflow: hidden;
+        transition: border-radius 0.15s;
+      }
+      .acc .pic img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #fff;
+      }
+      .acc:hover .pic,
+      .acc.on .pic {
+        border-radius: 16px;
+      }
+      .acc.on::before {
+        content: '';
+        position: absolute;
+        left: -12px;
+        top: 8px;
+        width: 4px;
+        height: 32px;
+        border-radius: 0 4px 4px 0;
+        background: var(--fg);
+      }
+      .acc.asleep .pic {
+        opacity: 0.55;
+      }
+      .acc .app {
+        position: absolute;
+        right: -3px;
+        bottom: -3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+        display: grid;
+        place-items: center;
+      }
+      .acc .app svg {
+        width: 10px;
+        height: 10px;
+      }
+      .acc .badge {
+        position: absolute;
+        top: -4px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        box-sizing: border-box;
+        border-radius: 9px;
+        background: #ef4444;
+        color: #fff;
+        border: 2px solid var(--bg);
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 14px;
+        text-align: center;
+      }
+      .acc .badge.dot {
+        min-width: 12px;
+        width: 12px;
+        height: 12px;
+        padding: 0;
+        top: -1px;
+        right: -1px;
+      }
+      .tool {
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+      .tool:hover {
+        background: var(--hover);
+        color: var(--fg);
+      }
+      .tool svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .tools {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 0 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo"><img src="../../build/icon.png" alt="" /></div>
+    <div id="list"></div>
+    <div class="tools">
+      <button class="tool" id="add" data-i18n-title="tray.addAccount"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg></button>
+      <button class="tool" id="settings" data-i18n-title="tray.settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" /></svg>
+      </button>
+    </div>
+    <script src="common.js"></script>
+    <script src="sidebar.js"></script>
+  </body>
+</html>

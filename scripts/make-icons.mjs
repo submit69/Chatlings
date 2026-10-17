@@ -1,4 +1,4 @@
-// Draws the Bongbong icon (a chat bubble with cat ears) without any image
+// Draws the Chatlings icon (a chat bubble with cat ears) without any image
 // library: shapes are tested per pixel with 4×4 supersampling, then written
 // as PNG (zlib) and ICO (PNG-compressed entries).
 //   node scripts/make-icons.mjs

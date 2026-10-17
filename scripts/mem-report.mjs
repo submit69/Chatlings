@@ -1,6 +1,6 @@
-// RAM report for the README: starts Bongbong with 0, 1 and 5 fake accounts
+// RAM report for the README: starts Chatlings with 0, 1 and 5 fake accounts
 // (and 5 sleeping ones), waits, then prints private memory per process.
-//   npm run mem-report            fake chat pages (measures Bongbong itself)
+//   npm run mem-report            fake chat pages (measures Chatlings itself)
 //   npm run mem-report -- --gpu   with hardware acceleration on
 import { spawn } from 'node:child_process';
 import os from 'node:os';
@@ -18,11 +18,11 @@ function run(label, n, extra = {}) {
   return new Promise((resolve, reject) => {
     const env = {
       ...process.env,
-      BONGBONG_FAKE: '1',
-      BONGBONG_FAKE_ACCOUNTS: String(n),
-      BONGBONG_USERDATA: fs.mkdtempSync(path.join(os.tmpdir(), 'bb-mem-')),
-      BONGBONG_MEMREPORT: String(SECONDS),
-      BONGBONG_NO_GPU: gpu ? '0' : '1',
+      CHATLINGS_FAKE: '1',
+      CHATLINGS_FAKE_ACCOUNTS: String(n),
+      CHATLINGS_USERDATA: fs.mkdtempSync(path.join(os.tmpdir(), 'bb-mem-')),
+      CHATLINGS_MEMREPORT: String(SECONDS),
+      CHATLINGS_NO_GPU: gpu ? '0' : '1',
       ...extra,
     };
     delete env.ELECTRON_RUN_AS_NODE;
@@ -32,9 +32,9 @@ function run(label, n, extra = {}) {
     child.stderr.on('data', (d) => process.env.DEBUG && process.stderr.write(d));
     process.stderr.write(label + '…\n');
     child.on('exit', () => {
-      const line = out.split('\n').find((l) => l.startsWith('BONGBONG_MEM '));
+      const line = out.split('\n').find((l) => l.startsWith('CHATLINGS_MEM '));
       if (!line) return reject(new Error(label + ': no report'));
-      resolve({ label, n, ...JSON.parse(line.slice('BONGBONG_MEM '.length)) });
+      resolve({ label, n, ...JSON.parse(line.slice('CHATLINGS_MEM '.length)) });
     });
   });
 }
@@ -43,11 +43,11 @@ const runs = [];
 runs.push(await run('0 accounts', 0));
 runs.push(await run('1 account', 1));
 runs.push(await run('5 accounts awake', 5));
-runs.push(await run('5 accounts asleep', 5, { BONGBONG_FAKE_SLEEP: '1' }));
+runs.push(await run('5 accounts asleep', 5, { CHATLINGS_FAKE_SLEEP: '1' }));
 
 console.log(`\nPrivate memory after ${SECONDS} s, hardware acceleration ${gpu ? 'ON' : 'OFF'} (Windows ${os.release()}, Electron ${createRequire(import.meta.url)('electron/package.json').version}).`);
 console.log('Fake chat pages are tiny, so "per account" here is the floor of one Chromium renderer, not the cost of a real web app.\n');
-console.log('| Case | Bongbong itself | Accounts | Total |');
+console.log('| Case | Chatlings itself | Accounts | Total |');
 console.log('|---|---:|---:|---:|');
 for (const r of runs) {
   const acc = r.accounts.reduce((s, a) => s + a.mb, 0);

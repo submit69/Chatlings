@@ -2,7 +2,7 @@
 
 <img src="build/icon.png" width="96" alt="" />
 
-# Bongbong
+# Chatlings
 
 **Bong bóng chat nổi trên máy tính.** Zalo, Messenger, WhatsApp, Telegram, Discord… thành các bong bóng nằm ở mép màn hình như trên điện thoại. Đang làm Excel, bấm bong bóng là chat, bấm ra ngoài là quay lại làm việc.
 
@@ -12,7 +12,7 @@ Nhiều tài khoản cùng lúc · bong bóng mèo & cún · tự ẩn khi share
 
 <img src="docs/demo.gif" width="760" alt="Bong bóng Zalo, WhatsApp, Discord nổi trên bảng tính; có tin mới thì mèo nhảy, rê chuột xem trước tin, bấm vào mở chat" />
 
-### [⬇ Tải cho Windows](https://github.com/submit69/bongbongzalo/releases/latest)
+### [⬇ Tải cho Windows](https://github.com/submit69/chatlings/releases/latest)
 
 </div>
 
@@ -30,9 +30,9 @@ Nhiều tài khoản cùng lúc · bong bóng mèo & cún · tự ẩn khi share
 | 🧪 | Slack · Microsoft Teams (công việc & cá nhân) · Google Chat · Google Messages · Instagram · X · LinkedIn · Element (Matrix) | đăng nhập trên web | tiêu đề / badge (beta) |
 | ➕ | **Mọi app chat web khác**: nhập tên và địa chỉ | | tiêu đề |
 
-Bongbong chạy **bản web chính thức** của từng dịch vụ, mỗi tài khoản một hồ sơ trình duyệt riêng. Không dùng API không chính thức, nên an toàn cho tài khoản như khi dùng trang web. Muốn nhiều nick thì thêm cùng một app nhiều lần: 2 Zalo + 1 WhatsApp + 1 Discord đều được.
+Chatlings chạy **bản web chính thức** của từng dịch vụ, mỗi tài khoản một hồ sơ trình duyệt riêng. Không dùng API không chính thức, nên an toàn cho tài khoản như khi dùng trang web. Muốn nhiều nick thì thêm cùng một app nhiều lần: 2 Zalo + 1 WhatsApp + 1 Discord đều được.
 
-Mọi trang đăng nhập ở trên đã được mở thử trong Bongbong và hiện bình thường (không bị báo "trình duyệt không được hỗ trợ"): `npm run check-adapters`. Selector đếm badge trong danh sách chat được viết theo giao diện công khai của từng trang, vẫn cần xác nhận lại với tài khoản đã đăng nhập; trong lúc đó tiêu đề tab (và chấm đỏ khi có thông báo) sẽ đảm nhận việc đếm. Rất mong nhận báo lỗi và PR.
+Mọi trang đăng nhập ở trên đã được mở thử trong Chatlings và hiện bình thường (không bị báo "trình duyệt không được hỗ trợ"): `npm run check-adapters`. Selector đếm badge trong danh sách chat được viết theo giao diện công khai của từng trang, vẫn cần xác nhận lại với tài khoản đã đăng nhập; trong lúc đó tiêu đề tab (và chấm đỏ khi có thông báo) sẽ đảm nhận việc đếm. Rất mong nhận báo lỗi và PR.
 
 ## Tính năng
 
@@ -51,11 +51,11 @@ Mọi trang đăng nhập ở trên đã được mở thử trong Bongbong và 
 
 ## Chuyện RAM, nói thẳng
 
-RAM chủ yếu nằm ở chính các trang web chat. Mỗi tài khoản **đang thức** là một tiến trình Chromium riêng, vì tách đăng nhập thì bắt buộc phải tách tiến trình. Bongbong giữ phần của mình nhỏ và cho bạn cho tài khoản đi ngủ.
+RAM chủ yếu nằm ở chính các trang web chat. Mỗi tài khoản **đang thức** là một tiến trình Chromium riêng, vì tách đăng nhập thì bắt buộc phải tách tiến trình. Chatlings giữ phần của mình nhỏ và cho bạn cho tài khoản đi ngủ.
 
 Đo bằng `npm run mem-report` (bộ nhớ riêng, giống cột *Bộ nhớ* trong Task Manager), Windows 11, Electron 44, sau 30 giây:
 
-| | Riêng Bongbong | Các tài khoản | Tổng |
+| | Riêng Chatlings | Các tài khoản | Tổng |
 |---|---:|---:|---:|
 | Chưa có tài khoản | 95 MB | — | 95 MB |
 | 1 tài khoản | 106 MB | 23 MB | 129 MB |
@@ -68,7 +68,7 @@ Tăng tốc phần cứng (GPU) mặc định **tắt** vì tiết kiệm khoả
 
 ## Cài đặt
 
-1. Tải `Bongbong-Setup-x.y.z.exe` (bản cài, tự cập nhật) hoặc `Bongbong-x.y.z-portable.exe` ở mục [Releases](https://github.com/submit69/bongbongzalo/releases/latest).
+1. Tải `Chatlings-Setup-x.y.z.exe` (bản cài, tự cập nhật) hoặc `Chatlings-x.y.z-portable.exe` ở mục [Releases](https://github.com/submit69/chatlings/releases/latest).
 2. File exe chưa được ký số nên Windows SmartScreen sẽ cảnh báo. Bấm **More info → Run anyway**. Bạn có thể đọc toàn bộ mã nguồn trước khi chạy.
 3. Chọn app, đăng nhập trên trang của chính app đó (quét QR với Zalo / WhatsApp / Telegram). Xong.
 
@@ -76,7 +76,7 @@ Chuột phải vào bong bóng để đổi giao diện, màu, âm báo, chế �
 
 ## Riêng tư
 
-**Không telemetry, không analytics, không có máy chủ Bongbong.** Bongbong chỉ kết nối tới các trang chat bạn thêm và, mỗi ngày một lần, tới GitHub Releases của dự án này để xem có bản mới (tắt được). Đăng nhập nằm trong hồ sơ Windows của bạn. Chi tiết: [PRIVACY.md](PRIVACY.md).
+**Không telemetry, không analytics, không có máy chủ Chatlings.** Chatlings chỉ kết nối tới các trang chat bạn thêm và, mỗi ngày một lần, tới GitHub Releases của dự án này để xem có bản mới (tắt được). Đăng nhập nằm trong hồ sơ Windows của bạn. Chi tiết: [PRIVACY.md](PRIVACY.md).
 
 PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN **không** mã hoá dữ liệu đăng nhập.
 
@@ -84,11 +84,11 @@ PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN **không** 
 
 **Sao không có LINE, Viber, Signal, KakaoTalk?** Các app này không có bản web, nên không có gì để cho vào bong bóng. WeChat có bản web nhưng chặn phần lớn tài khoản mới.
 
-**Có bị đá khỏi Zalo / WhatsApp trên máy tính hay điện thoại không?** Bongbong chỉ là thêm một phiên *web*. Zalo và WhatsApp giới hạn số thiết bị liên kết cho mỗi tài khoản; nếu đã đủ giới hạn, đăng nhập ở đây có thể làm thoát một phiên web/desktop khác của **cùng tài khoản đó**. Các tài khoản khác nhau không ảnh hưởng nhau.
+**Có bị đá khỏi Zalo / WhatsApp trên máy tính hay điện thoại không?** Chatlings chỉ là thêm một phiên *web*. Zalo và WhatsApp giới hạn số thiết bị liên kết cho mỗi tài khoản; nếu đã đủ giới hạn, đăng nhập ở đây có thể làm thoát một phiên web/desktop khác của **cùng tài khoản đó**. Các tài khoản khác nhau không ảnh hưởng nhau.
 
 **Google Chat báo "Trình duyệt hoặc ứng dụng này có thể không an toàn".** Google đôi khi chặn đăng nhập trong trình duyệt nhúng. Vì vậy Google Chat đang ở mức beta. Đăng nhập qua SSO của Google Workspace thường vẫn được; nếu không thì hiện chưa có cách.
 
-**Số tin chưa đọc của app X sai hoặc không hiện.** Trang web hay đổi giao diện. Selector của mỗi app nằm trong một file (`src/adapters/<app>/selectors.js`), sửa thường chỉ là một dòng. Bongbong luôn dự phòng bằng tiêu đề tab, rồi tới chấm đỏ khi favicon đổi hoặc có thông báo mới.
+**Số tin chưa đọc của app X sai hoặc không hiện.** Trang web hay đổi giao diện. Selector của mỗi app nằm trong một file (`src/adapters/<app>/selectors.js`), sửa thường chỉ là một dòng. Chatlings luôn dự phòng bằng tiêu đề tab, rồi tới chấm đỏ khi favicon đổi hoặc có thông báo mới.
 
 **Muốn chụp màn hình bong bóng?** Tắt *Riêng tư → Ẩn khỏi chia sẻ màn hình* trong khay hệ thống trước.
 
@@ -116,6 +116,6 @@ npm run e2e      # test đầu-cuối trên cửa sổ thật
 
 ## Tuyên bố
 
-Bongbong là dự án mã nguồn mở độc lập, **không liên kết, không được bảo trợ và không có quan hệ** với Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi tên và nhãn hiệu thuộc về chủ sở hữu; icon dịch vụ lấy từ [simple-icons](https://simpleicons.org) (CC0), chỉ dùng để phân biệt dịch vụ.
+Chatlings là dự án mã nguồn mở độc lập, **không liên kết, không được bảo trợ và không có quan hệ** với Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi tên và nhãn hiệu thuộc về chủ sở hữu; icon dịch vụ lấy từ [simple-icons](https://simpleicons.org) (CC0), chỉ dùng để phân biệt dịch vụ.
 
-MIT © Bongbong contributors
+MIT © Chatlings contributors

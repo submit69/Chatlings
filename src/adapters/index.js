@@ -19,7 +19,7 @@ const adapters = new Map(IDS.map((id) => [id, require('./' + id)]));
 const FAKE_SELECTORS = { unreadBadge: '.fake-badge', profileName: '#fake-name', profileAvatar: '#fake-avatar' };
 
 function isFake() {
-  return process.env.BONGBONG_FAKE === '1';
+  return process.env.CHATLINGS_FAKE === '1';
 }
 
 function get(id) {
@@ -32,7 +32,7 @@ function list() {
 
 /**
  * Everything the app needs to run one account: URL, allowed hosts, selectors.
- * Applies the custom URL and BONGBONG_FAKE overrides in one place.
+ * Applies the custom URL and CHATLINGS_FAKE overrides in one place.
  */
 function resolve(account) {
   const a = get(account.adapter);

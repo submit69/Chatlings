@@ -22,6 +22,11 @@
   "bar.reload": "Reload (F5)",
   "bar.pin": "Keep open",
   "bar.unpin": "Hide when I click elsewhere",
+  "bar.full": "Open the full app",
+  "bar.min": "Minimise",
+  "bar.max": "Maximise",
+  "bar.restore": "Restore",
+  "tray.openApp": "Open Chatlings",
   "bar.close": "Close",
 
   "tray.noAccounts": "No accounts yet",
@@ -42,7 +47,7 @@
   "tray.lockNow": "Lock now",
   "tray.memory": "Memory",
   "tray.memTotal": "Total: {mb} MB",
-  "tray.memFrame": "Bongbong itself: {mb} MB",
+  "tray.memFrame": "Chatlings itself: {mb} MB",
   "tray.memRefresh": "Refresh",
   "tray.asleep": "asleep",
   "tray.sleepNow": "Sleep now",
@@ -50,7 +55,7 @@
   "tray.settings": "Settings…",
   "tray.autoLaunch": "Start with Windows",
   "tray.checkUpdates": "Check for updates",
-  "tray.quit": "Quit Bongbong",
+  "tray.quit": "Quit Chatlings",
 
   "group.work": "Work",
   "group.personal": "Personal",
@@ -115,9 +120,9 @@
   "confirm.remove": "Remove {name}?",
   "confirm.removeDetail": "The bubble and the saved login for this account are deleted. Your messages stay on the service.",
 
-  "picker.title": "Add account — Bongbong",
+  "picker.title": "Add account — Chatlings",
   "picker.heading": "Add an account",
-  "picker.sub": "Pick an app. You sign in on its official web page, inside Bongbong. Add the same app several times for several accounts.",
+  "picker.sub": "Pick an app. You sign in on its official web page, inside Chatlings. Add the same app several times for several accounts.",
   "picker.tier1": "Fully supported",
   "picker.tier2": "More apps",
   "picker.beta": "beta",
@@ -133,9 +138,9 @@
   "picker.loginPassword": "Sign in on the web page",
   "picker.unsupported": "Not possible (no web version):",
   "picker.unsupportedList": "LINE, Viber, Signal, KakaoTalk. WeChat Web blocks most new accounts.",
-  "picker.privacyNote": "Bongbong is not affiliated with any of these services. Your login stays on this computer; Bongbong sends no data anywhere.",
+  "picker.privacyNote": "Chatlings is not affiliated with any of these services. Your login stays on this computer; Chatlings sends no data anywhere.",
 
-  "lock.title": "Bongbong is locked",
+  "lock.title": "Chatlings is locked",
   "lock.sub": "Enter your PIN to open your chats.",
   "lock.unlock": "Unlock",
   "lock.wrong": "Wrong PIN. {n} tries left.",
@@ -143,15 +148,15 @@
   "lock.invalid": "The PIN must be 4 to 8 digits.",
   "lock.wrongOld": "The current PIN is wrong.",
 
-  "update.available": "Bongbong {version} is available.",
+  "update.available": "Chatlings {version} is available.",
   "update.open": "Open download page",
-  "update.downloading": "Downloading Bongbong {version} in the background…",
-  "update.ready": "Bongbong {version} is ready. Restart now to update?",
+  "update.downloading": "Downloading Chatlings {version} in the background…",
+  "update.ready": "Chatlings {version} is ready. Restart now to update?",
   "update.restart": "Restart",
   "update.none": "You have the latest version ({version}).",
   "update.failed": "Could not check for updates.",
 
-  "settings.title": "Settings — Bongbong",
+  "settings.title": "Settings — Chatlings",
   "settings.tab.general": "General",
   "settings.tab.accounts": "Accounts",
   "settings.tab.privacy": "Privacy & PIN",
@@ -168,7 +173,7 @@
   "settings.checkUpdatesHint": "Asks GitHub Releases once a day. Nothing else is sent.",
   "settings.spellcheck": "Spell check while typing",
   "settings.gpu": "Hardware acceleration",
-  "settings.gpuHint": "Off saves about 60 MB of RAM. Turn on if video calls or animations stutter. Takes effect after restarting Bongbong.",
+  "settings.gpuHint": "Off saves about 60 MB of RAM. Turn on if video calls or animations stutter. Takes effect after restarting Chatlings.",
   "settings.groupHint": "Turn a whole profile on or off.",
   "settings.dndOff": "Off",
 
@@ -190,7 +195,7 @@
   "settings.acc.hours": "Hours",
   "settings.acc.outside": "Outside these hours",
 
-  "settings.captureHint": "Bongbong windows are left out of screenshots, recordings and screen sharing (Meet, Zoom, Teams, OBS). You still see them. Turn off to take a screenshot of your bubbles.",
+  "settings.captureHint": "Chatlings windows are left out of screenshots, recordings and screen sharing (Meet, Zoom, Teams, OBS). You still see them. Turn off to take a screenshot of your bubbles.",
   "settings.presentHint": "Hides bubbles when Windows reports presentation mode or a full-screen game. A maximised Excel does not count.",
   "settings.pin.title": "PIN lock",
   "settings.pin.warning": "The PIN only stops other people using this PC from opening your chats. It does not encrypt your login data.",
@@ -210,7 +215,7 @@
 
   "settings.mem.truth": "Most of the RAM is used by the chat websites themselves: every awake account is its own browser process, because separate logins need separate processes. Put accounts to sleep to free it.",
   "settings.mem.total": "Total",
-  "settings.mem.frame": "Bongbong itself",
+  "settings.mem.frame": "Chatlings itself",
   "settings.mem.account": "Account",
   "settings.mem.app": "App",
   "settings.mem.state": "State",
@@ -221,9 +226,9 @@
 
   "about.tagline": "Floating chat heads for your web chats. Multi-account, open source.",
   "about.privacy": "Privacy",
-  "about.privacyText": "No telemetry, no analytics, no servers of our own. Bongbong only talks to the chat sites you add and to GitHub Releases for updates.",
+  "about.privacyText": "No telemetry, no analytics, no servers of our own. Chatlings only talks to the chat sites you add and to GitHub Releases for updates.",
   "about.source": "Source code",
   "about.license": "License",
   "about.licenseText": "MIT. Service glyphs from simple-icons (CC0).",
-  "about.disclaimer": "Bongbong is not affiliated with, endorsed by or connected to Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All trademarks belong to their owners."
+  "about.disclaimer": "Chatlings is not affiliated with, endorsed by or connected to Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All trademarks belong to their owners."
 }

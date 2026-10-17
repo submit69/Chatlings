@@ -23,7 +23,7 @@ function createDock({ store, onReady }) {
     maximizable: false,
     fullscreenable: false,
     backgroundColor: '#00000000',
-    title: 'Bongbong',
+    title: 'Chatlings',
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload', 'bubble-preload.js'),
       contextIsolation: true,

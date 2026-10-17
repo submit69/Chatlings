@@ -119,7 +119,7 @@ class AccountManager extends EventEmitter {
         spellcheck: !!this.store.settings.spellcheck,
         autoplayPolicy: 'document-user-activation-required',
         enableWebSQL: false,
-        devTools: !!process.env.BONGBONG_DEVTOOLS,
+        devTools: !!process.env.CHATLINGS_DEVTOOLS,
         additionalArguments: [`--bb-account=${id}`, `--bb-adapter=${r.adapter.id}`],
       },
     });
@@ -208,7 +208,7 @@ class AccountManager extends EventEmitter {
     });
     wc.on('before-input-event', (_e, input) => {
       if (input.type === 'keyDown' && input.key === 'F5') wc.reload();
-      if (input.type === 'keyDown' && input.control && input.shift && input.key.toLowerCase() === 'i' && process.env.BONGBONG_DEVTOOLS) wc.openDevTools({ mode: 'detach' });
+      if (input.type === 'keyDown' && input.control && input.shift && input.key.toLowerCase() === 'i' && process.env.CHATLINGS_DEVTOOLS) wc.openDevTools({ mode: 'detach' });
     });
   }
 

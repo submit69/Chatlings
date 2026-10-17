@@ -92,9 +92,9 @@ test('custom adapter: hosts from URL, fake mode override', () => {
   assert.deepEqual(c.hostsFor('nope'), []);
   const r = registry.resolve({ id: 'custom-1', adapter: 'custom', url: 'https://chat.example.com/' });
   assert.equal(r.url, 'https://chat.example.com/');
-  process.env.BONGBONG_FAKE = '1';
+  process.env.CHATLINGS_FAKE = '1';
   const f = registry.resolve({ id: 'zalo-1', adapter: 'zalo', fakeMode: 'dom' });
-  delete process.env.BONGBONG_FAKE;
+  delete process.env.CHATLINGS_FAKE;
   assert.match(f.url, /^file:.*fake-chat\.html\?id=zalo-1&adapter=zalo&mode=dom$/);
   assert.equal(f.selectors.unreadBadge, '.fake-badge');
 });

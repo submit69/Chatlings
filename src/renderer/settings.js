@@ -267,11 +267,11 @@
   function about() {
     const link = (url, text) => el('a', { href: '#', text, onclick: (e) => (e.preventDefault(), bb.invoke('app:openExternal', url)) });
     return [
-      el('h1', { text: 'Bongbong ' + D.version }),
+      el('h1', { text: 'Chatlings ' + D.version }),
       el('p', { class: 'muted', text: t('about.tagline') }),
       card(
         el('div', { class: 'opt' }, el('label', {}, t('about.privacy'), el('span', { class: 'hint', text: t('about.privacyText') }))),
-        el('div', { class: 'opt' }, el('label', {}, t('about.source')), link('https://github.com/submit69/bongbongzalo', 'github.com/submit69/bongbongzalo')),
+        el('div', { class: 'opt' }, el('label', {}, t('about.source')), link('https://github.com/submit69/chatlings', 'github.com/submit69/chatlings')),
         el('div', { class: 'opt' }, el('label', {}, t('tray.checkUpdates')), el('button', { text: t('tray.checkUpdates'), onclick: () => bb.invoke('updates:check') })),
         el('div', { class: 'opt' }, el('label', {}, t('about.license'), el('span', { class: 'hint', text: t('about.licenseText') }))),
       ),
