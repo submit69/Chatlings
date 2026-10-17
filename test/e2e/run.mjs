@@ -193,6 +193,11 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
     });
 
     await t.test('drag the dock across the screen snaps it to the other edge', async () => {
+      // a preview that popped up for the last message widens the dock; wait it out
+      await until(async () => {
+        const c = globalThis.__chatlings;
+        return c.dock.win.webContents.executeJavaScript(`document.getElementById('preview').hidden`);
+      }, null, 12000, 'previews gone');
       const before = await ev(() => globalThis.__chatlings.store.data.dock.edge);
       const p = await bubbleXY(ev, 0);
       const dir = before === 'right' ? -1 : 1;
