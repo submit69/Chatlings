@@ -118,4 +118,4 @@ npm run e2e      # test đầu-cuối trên cửa sổ thật
 
 Chatlings là dự án mã nguồn mở độc lập, **không liên kết, không được bảo trợ và không có quan hệ** với Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi tên và nhãn hiệu thuộc về chủ sở hữu; icon dịch vụ lấy từ [simple-icons](https://simpleicons.org) (CC0), chỉ dùng để phân biệt dịch vụ.
 
-MIT © Chatlings contributors
+MIT © Chatlings contributors · Ghé [noilamviec.com](https://noilamviec.com/?utm_source=chatlings&utm_medium=readme): review công ty ẩn danh, trung thực.

@@ -58,6 +58,7 @@
   "tray.settings": "Settings…",
   "tray.autoLaunch": "Start with Windows",
   "tray.checkUpdates": "Check for updates",
+  "tray.nlv": "noilamviec.com: company reviews",
   "tray.quit": "Quit Chatlings",
 
   "group.work": "Work",
@@ -127,6 +128,8 @@
   "picker.heading": "Add an account",
   "picker.sub": "Pick an app. You sign in on its official web page, inside Chatlings. Add the same app several times for several accounts.",
   "picker.tier1": "Fully supported",
+  "picker.nlv": "Nơi Làm Việc",
+  "picker.nlvHint": "Company reviews · opens in browser",
   "picker.tier2": "More apps",
   "picker.beta": "beta",
   "picker.tier2Hint": "Unread counts come from the tab title or badges only, so they can be less precise.",
@@ -231,6 +234,7 @@
   "about.privacy": "Privacy",
   "about.privacyText": "No telemetry, no analytics, no servers of our own. Chatlings only talks to the chat sites you add and to GitHub Releases for updates.",
   "about.source": "Source code",
+  "about.nlvText": "Anonymous, honest company reviews in Vietnam",
   "about.license": "License",
   "about.licenseText": "MIT. Service glyphs from simple-icons (CC0).",
   "about.disclaimer": "Chatlings is not affiliated with, endorsed by or connected to Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All trademarks belong to their owners."

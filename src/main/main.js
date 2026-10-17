@@ -635,7 +635,7 @@ function start() {
   });
   ipcMain.handle('updates:check', () => updater.check({ interactive: true }));
   ipcMain.handle('app:openExternal', (_e, url) => {
-    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons)/.test(String(url));
+    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/)/i.test(String(url));
     if (ok) shell.openExternal(String(url));
     return ok;
   });

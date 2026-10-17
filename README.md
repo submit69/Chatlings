@@ -118,4 +118,4 @@ npm run e2e      # end-to-end in real windows
 
 Chatlings is an independent open-source project. It is **not affiliated with, endorsed by or connected to** Zalo, Meta (Messenger, WhatsApp, Instagram), Telegram, Discord, Slack, Microsoft, Google, X, LinkedIn, Element or any other supported service. All names and trademarks belong to their owners; service glyphs come from [simple-icons](https://simpleicons.org) (CC0) and are used only to tell services apart.
 
-MIT © Chatlings contributors
+MIT © Chatlings contributors · Also see [noilamviec.com](https://noilamviec.com/?utm_source=chatlings&utm_medium=readme): anonymous, honest company reviews in Vietnam.

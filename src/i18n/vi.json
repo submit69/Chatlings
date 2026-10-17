@@ -58,6 +58,7 @@
   "tray.settings": "Cài đặt…",
   "tray.autoLaunch": "Khởi động cùng Windows",
   "tray.checkUpdates": "Kiểm tra cập nhật",
+  "tray.nlv": "noilamviec.com: review công ty",
   "tray.quit": "Thoát Chatlings",
 
   "group.work": "Công việc",
@@ -127,6 +128,8 @@
   "picker.heading": "Thêm tài khoản",
   "picker.sub": "Chọn app. Bạn đăng nhập trên trang web chính thức của app, ngay trong Chatlings. Muốn nhiều nick thì thêm cùng một app nhiều lần.",
   "picker.tier1": "Hỗ trợ đầy đủ",
+  "picker.nlv": "Nơi Làm Việc",
+  "picker.nlvHint": "Review công ty · mở trình duyệt",
   "picker.tier2": "App khác",
   "picker.beta": "beta",
   "picker.tier2Hint": "Chỉ đếm tin qua tiêu đề tab hoặc badge, nên có thể kém chính xác hơn.",
@@ -231,6 +234,7 @@
   "about.privacy": "Riêng tư",
   "about.privacyText": "Không telemetry, không analytics, không có máy chủ riêng. Chatlings chỉ kết nối tới các trang chat bạn thêm và GitHub Releases để cập nhật.",
   "about.source": "Mã nguồn",
+  "about.nlvText": "Review công ty ẩn danh, trung thực",
   "about.license": "Giấy phép",
   "about.licenseText": "MIT. Icon dịch vụ từ simple-icons (CC0).",
   "about.disclaimer": "Chatlings không liên kết, không được bảo trợ và không có quan hệ với Zalo, Meta, Telegram, WhatsApp, Discord, Slack, Microsoft, Google, X, LinkedIn, Element hay bất kỳ dịch vụ được hỗ trợ nào. Mọi nhãn hiệu thuộc về chủ sở hữu."

@@ -25,6 +25,22 @@
     $(a.tier === 1 ? 'tier1' : 'tier2').append(tile);
   }
 
+  // Not a chat account: a shortcut to noilamviec.com (company reviews), opened in the browser.
+  $('tier1').append(
+    el(
+      'button',
+      {
+        class: 'tile link',
+        type: 'button',
+        'data-link': 'noilamviec',
+        title: 'noilamviec.com',
+        onclick: () => bb.invoke('app:openExternal', 'https://noilamviec.com/?utm_source=chatlings&utm_medium=app&utm_campaign=picker'),
+      },
+      el('span', { class: 'glyph img' }, el('img', { src: 'brand/noilamviec.png', alt: '' })),
+      el('span', {}, el('div', { class: 'n', text: t('picker.nlv') }), el('div', { class: 'h', text: t('picker.nlvHint') })),
+    ),
+  );
+
   $('custom').addEventListener('submit', (e) => {
     e.preventDefault();
     add({ adapter: 'custom', name: $('cname').value, url: $('curl').value });

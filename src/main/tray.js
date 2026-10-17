@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const { Tray, Menu, nativeImage, app } = require('electron');
+const { Tray, Menu, nativeImage, app, shell } = require('electron');
 const registry = require('../adapters');
 const { badgeText, total } = require('./unread');
 const { tomorrowMorning } = require('./schedule');
@@ -110,6 +110,8 @@ function createTray(ctx) {
       { label: t('tray.settings'), click: () => ctx.openSettings() },
       { label: t('tray.autoLaunch'), type: 'checkbox', checked: !!s.autoLaunch, click: (i) => ctx.setSetting('autoLaunch', i.checked) },
       { label: t('tray.checkUpdates'), click: () => ctx.checkUpdates(true) },
+      { type: 'separator' },
+      { label: t('tray.nlv'), click: () => shell.openExternal('https://noilamviec.com/?utm_source=chatlings&utm_medium=app&utm_campaign=tray') },
       { type: 'separator' },
       { label: t('tray.quit'), click: () => app.quit() },
     ]);
