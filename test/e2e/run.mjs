@@ -396,6 +396,8 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
           heading: !!document.querySelector('[data-i18n="picker.fun"]').textContent,
           nlv: !!document.querySelector('[data-link="noilamviec"]'),
         })`);
+        await w.webContents.executeJavaScript("document.getElementById('fun').scrollIntoView({ block: 'center' })");
+        await new Promise((res) => setTimeout(res, 200));
         out.png = (await w.webContents.capturePage()).toPNG().toString('base64');
         w.close();
         return out;
