@@ -118,6 +118,7 @@ function createTray(ctx) {
       { label: t('tray.autoLaunch'), type: 'checkbox', checked: !!s.autoLaunch, click: (i) => ctx.setSetting('autoLaunch', i.checked) },
       { label: t('tray.checkUpdates'), click: () => ctx.checkUpdates(true) },
       { type: 'separator' },
+      ...(ctx.donateInfo().any ? [{ label: t('tray.donate'), click: () => ctx.openDonate() }] : []),
       { label: t('tray.nlv'), click: () => shell.openExternal('https://noilamviec.com/?utm_source=chatlings&utm_medium=app&utm_campaign=tray') },
       { type: 'separator' },
       { label: t('tray.quit'), click: () => app.quit() },

@@ -124,6 +124,9 @@ function createPopup({ onShown, onHidden, onWindowState, isPinned, setPinned, ge
     if (!bar) {
       bar = ownView('popup-bar.html');
       win.contentView.addChildView(bar);
+      // Lay it out now: if the window keeps the same size there is no 'resize'
+      // event to do it, and the bar would stay 0×0 (invisible, no close button).
+      layout();
     }
     return bar;
   }
@@ -132,6 +135,7 @@ function createPopup({ onShown, onHidden, onWindowState, isPinned, setPinned, ge
     if (!sidebar) {
       sidebar = ownView('sidebar.html');
       win.contentView.addChildView(sidebar);
+      layout();
     }
     return sidebar;
   }

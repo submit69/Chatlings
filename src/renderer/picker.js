@@ -41,6 +41,17 @@
     ),
   );
 
+  if (init.donate) {
+    $('tier1').append(
+      el(
+        'button',
+        { class: 'tile link', type: 'button', 'data-link': 'donate', onclick: () => bb.send('donate:open') },
+        el('span', { class: 'glyph', style: { background: '#F59E0B', fontSize: '22px' } }, '☕'),
+        el('span', {}, el('div', { class: 'n', text: t('donate.tile') }), el('div', { class: 'h', text: t('donate.tileHint') })),
+      ),
+    );
+  }
+
   $('custom').addEventListener('submit', (e) => {
     e.preventDefault();
     add({ adapter: 'custom', name: $('cname').value, url: $('curl').value });

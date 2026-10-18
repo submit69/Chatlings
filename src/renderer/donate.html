@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'" />
+    <title>Chatlings</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      main {
+        padding: 22px 24px 26px;
+        text-align: center;
+      }
+      .cup {
+        font-size: 42px;
+        line-height: 1;
+      }
+      h1 {
+        margin: 8px 0 6px;
+      }
+      .qr {
+        display: inline-block;
+        background: #fff;
+        border-radius: 16px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        margin: 14px 0 8px;
+      }
+      .qr img {
+        display: block;
+        width: 220px;
+        height: 220px;
+      }
+      .bank {
+        font-size: 14px;
+      }
+      .bank b {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.5px;
+      }
+      .row {
+        justify-content: center;
+        margin-top: 6px;
+      }
+      .links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 18px;
+      }
+      .links button {
+        padding: 10px 14px;
+        font-weight: 600;
+      }
+      #picture {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        margin: 14px auto 0;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(15, 23, 42, 0.15);
+      }
+      #picture[hidden] {
+        display: none;
+      }
+      #copied {
+        min-height: 1.4em;
+        color: var(--accent);
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="cup">☕</div>
+      <h1 data-i18n="donate.title"></h1>
+      <p class="muted" data-i18n="donate.lead"></p>
+      <img id="picture" alt="" hidden />
+      <section id="bank" hidden>
+        <div class="qr"><img src="brand/donate-qr.png" alt="VietQR" /></div>
+        <div class="bank muted small" data-i18n="donate.scan"></div>
+        <div class="bank" id="bank-line"></div>
+        <div class="row"><button id="copy" type="button" data-i18n="donate.copy"></button></div>
+        <div id="copied"></div>
+      </section>
+      <div class="links" id="links"></div>
+    </main>
+    <script src="common.js"></script>
+    <script src="donate.js"></script>
+  </body>
+</html>

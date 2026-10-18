@@ -34,6 +34,7 @@ const { accountMode, tomorrowMorning } = require('./schedule');
 const { MODES: SLEEP_MODES } = require('./sleep');
 const picker = require('./picker');
 const updater = require('./updater');
+const { vietqrPayload } = require('./vietqr');
 const platform = require('./platform');
 
 const { t } = i18n;
@@ -290,6 +291,34 @@ function start() {
   }
   ctx.addAccount = addAccount;
 
+  /** Donation channels from src/donate.json (empty values = hidden). */
+  function donateInfo() {
+    let cfg = {};
+    try {
+      cfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'donate.json'), 'utf8'));
+    } catch {}
+    const https = (u, host) => (typeof u === 'string' && new RegExp('^https://(www\\.)?' + host + '/').test(u) ? u : '');
+    const b = cfg.bank || {};
+    const hasQr = !!vietqrPayload(b) && fs.existsSync(path.join(__dirname, '..', 'renderer', 'brand', 'donate-qr.png'));
+    // showAccount=false: only the QR code, no name or account number on screen.
+    const bank = !hasQr ? null : b.showAccount === false ? { qrOnly: true } : { bankName: String(b.bankName || ''), account: String(b.account || '').replace(/\s/g, ''), holder: String(b.holder || '') };
+    const image = /^[\w.-]+\.(png|jpe?g|webp)$/i.test(String(cfg.image || '')) && fs.existsSync(path.join(__dirname, '..', 'renderer', 'brand', cfg.image)) ? 'brand/' + cfg.image : '';
+    const info = {
+      image,
+      bank: image ? null : bank,
+      buyMeACoffee: https(cfg.buyMeACoffee, 'buymeacoffee\\.com'),
+      kofi: https(cfg.kofi, 'ko-fi\\.com'),
+      githubSponsors: /^[A-Za-z0-9-]+$/.test(String(cfg.githubSponsors || '')) ? `https://github.com/sponsors/${cfg.githubSponsors}` : '',
+    };
+    info.any = !!(info.image || info.bank || info.buyMeACoffee || info.kofi || info.githubSponsors);
+    return info;
+  }
+  ctx.donateInfo = donateInfo;
+  function openDonate() {
+    if (donateInfo().any) picker.openDonate({ title: t('donate.title'), protect: (w) => privacy.protect(w) });
+  }
+  ctx.openDonate = openDonate;
+
   function openSettings(query) {
     if (lock.isLocked()) return openFull();
     picker.openSettings({ title: t('settings.title'), query, protect: (w) => privacy.protect(w) });
@@ -505,6 +534,7 @@ function start() {
     adapters: registry.list().map((a) => ({ id: a.id, name: a.name, tier: a.tier, icon: a.icon, color: a.color, loginHint: a.loginHint })),
     state: dockState(),
     fake: registry.isFake(),
+    donate: donateInfo().any,
   }));
 
   on('dock:hover', (e, on) => fromDock(e) && dock.setHover(!!on));
@@ -558,6 +588,8 @@ function start() {
   on('side:select', (_e, id) => openFull(String(id)));
   on('side:add', () => addAccount());
   on('side:settings', () => openSettings());
+  on('donate:open', () => openDonate());
+  handle('donate:info', () => donateInfo());
   on('side:context', (_e, id) => {
     const m = accountMenu(String(id));
     if (m) m.popup();
@@ -600,6 +632,7 @@ function start() {
     const { pin, ...settings } = store.settings;
     return {
       settings: { ...settings, pinSet: !!pin },
+      donate: donateInfo().any,
       features: platform.features,
       accounts: store.accounts().map((a) => {
         const st = accounts.state(a.id);
@@ -664,7 +697,8 @@ function start() {
   });
   handle('updates:check', () => updater.check({ interactive: true }));
   handle('app:openExternal', (_e, url) => {
-    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/)/i.test(String(url));
+    const d = donateInfo();
+    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/)/i.test(String(url)) || [d.buyMeACoffee, d.kofi, d.githubSponsors].includes(String(url));
     if (ok) shell.openExternal(String(url));
     return ok;
   });

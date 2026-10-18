@@ -5,14 +5,14 @@ const { contextBridge, ipcRenderer } = require('electron');
 const SEND = new Set([
   'dock:hover', 'dock:click', 'dock:context', 'dock:dragMove', 'dock:dragEnd', 'dock:size', 'dock:previewClick', 'dock:hubContext', 'dock:dismiss',
   'bar:pin', 'bar:close', 'bar:reload', 'bar:menu', 'bar:full', 'bar:min', 'bar:max',
-  'side:select', 'side:add', 'side:settings', 'side:context',
+  'side:select', 'side:add', 'side:settings', 'side:context', 'donate:open',
   'win:close',
 ]);
 const INVOKE = new Set([
   'bb:init', 'dock:dragStart', 'dock:preview',
   'picker:add', 'lock:unlock',
   'settings:get', 'settings:set', 'account:update', 'account:action', 'account:move',
-  'pin:set', 'pin:clear', 'mem:sample', 'sound:pickFile', 'sound:test', 'updates:check', 'app:openExternal',
+  'pin:set', 'pin:clear', 'donate:info', 'mem:sample', 'sound:pickFile', 'sound:test', 'updates:check', 'app:openExternal',
 ]);
 const ON = new Set(['bb:state', 'dock:play', 'dock:peek', 'side:state', 'bar:state', 'lock:state', 'settings:refresh']);
 

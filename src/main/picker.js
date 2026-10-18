@@ -49,6 +49,10 @@ function openSettings(opts) {
   return openPage('settings', 'settings.html', { width: 860, height: 680, ...opts });
 }
 
+function openDonate(opts) {
+  return openPage('donate', 'donate.html', { width: 460, height: 560, ...opts });
+}
+
 function closePage(name) {
   const w = open.get(name);
   if (w && !w.isDestroyed()) w.close();
@@ -63,4 +67,4 @@ function windows() {
   return [...open.values()].filter((w) => !w.isDestroyed());
 }
 
-module.exports = { openPicker, openSettings, closePage, sendTo, windows };
+module.exports = { openPicker, openSettings, openDonate, closePage, sendTo, windows };

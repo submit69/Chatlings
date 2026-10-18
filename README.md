@@ -110,6 +110,12 @@ The PIN only stops people using your PC from opening your chats. It does **not**
 - Global shortcut + quick search across accounts
 - Code signing (SignPath)
 
+## Support
+
+Chatlings is free and has no ads. If it saves you time, you can buy the author a coffee ☕ by scanning this code with MoMo or any Vietnamese banking app:
+
+<img src="src/renderer/brand/donate.jpg" width="440" alt="VietQR MoMo" />
+
 ## Contributing
 
 New apps and new skins are small, self-contained PRs. See [CONTRIBUTING.md](CONTRIBUTING.md) and [the skin guide](src/renderer/skins/README.md).

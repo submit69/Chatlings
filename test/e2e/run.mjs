@@ -124,9 +124,11 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
       const r = await until(() => {
         const c = globalThis.__chatlings;
         const id = c.store.accounts()[1].id;
-        return c.popup.isShowing(id) && { id, visible: c.accounts.state(id).view.getVisible() };
+        const bar = c.popup.win.contentView.children.find((v) => /popup-bar/.test(v.webContents.getURL()));
+        return c.popup.isShowing(id) && { id, visible: c.accounts.state(id).view.getVisible(), bar: bar ? bar.getBounds() : null };
       }, null, 5000, 'popup open');
       assert.equal(r.visible, true);
+      assert.ok(r.bar && r.bar.height === 36 && r.bar.width > 0, 'title bar (with ×) is laid out: ' + JSON.stringify(r.bar));
       // opening marks it viewed: the notification dot of account 3 is untouched
       await click(ev, 1);
       await until(() => !globalThis.__chatlings.popup.isVisible(), null, 4000, 'second click closes');
@@ -266,13 +268,18 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
         const side = c.popup.win.contentView.children.find((v) => /sidebar.html/.test(v.webContents.getURL()));
         const items = side ? await side.webContents.executeJavaScript("document.querySelectorAll('.acc').length") : 0;
         const active = side ? await side.webContents.executeJavaScript("document.querySelectorAll('.acc.on').length") : 0;
+        const barView = c.popup.win.contentView.children.find((v) => /popup-bar/.test(v.webContents.getURL()));
+        const bar = barView ? barView.getBounds() : null;
+        const sideBounds = side ? side.getBounds() : null;
         const focused = c.popup.win.isFocused();
         const dockWhileFocused = c.dock.win.isVisible();
         c.popup.minimize();
         await new Promise((r) => setTimeout(r, 600));
-        return { id, mode: c.popup.mode(), items, active, focused, dockWhileFocused, dockAfterMin: c.dock.win.isVisible(), fullOpen: c.popup.isFullOpen() };
+        return { id, mode: c.popup.mode(), items, active, bar, sideBounds, focused, dockWhileFocused, dockAfterMin: c.dock.win.isVisible(), fullOpen: c.popup.isFullOpen() };
       });
       assert.equal(r.mode, 'full');
+      assert.ok(r.bar && r.bar.height === 36 && r.bar.width > 0, 'full window title bar (min / max / ×) is laid out: ' + JSON.stringify(r.bar));
+      assert.ok(r.sideBounds && r.sideBounds.width > 0 && r.sideBounds.height > 0, 'sidebar is laid out');
       assert.equal(r.items, 4, 'all accounts in the sidebar');
       assert.equal(r.active, 1);
       if (r.focused) assert.equal(r.dockWhileFocused, false, 'bubbles hidden while using the full app');

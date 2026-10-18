@@ -258,3 +258,29 @@ test('user agent matches the OS and the real Chrome version', async () => {
   assert.equal(features.clickThrough, !isLinux);
   assert.equal(features.presentationDetection, isWin);
 });
+
+// ---------- donations: VietQR ----------
+test('VietQR payload: EMVCo fields and CRC-16/CCITT-FALSE', () => {
+  const { crc16, vietqrPayload, binFor, ascii } = require('../src/main/vietqr.js');
+  assert.equal(crc16('123456789'), '29B1', 'standard check value');
+  assert.equal(vietqrPayload({ bankName: '', account: '' }), null, 'not configured');
+  assert.equal(binFor({ bankName: 'Vietcombank' }), '970436');
+  assert.equal(binFor({ bin: '970422' }), '970422');
+  assert.equal(ascii('Ủng hộ Chatlings đây'), 'Ung ho Chatlings day');
+  const p = vietqrPayload({ bankName: 'MB Bank', account: '0123 456 789', note: 'Ủng hộ Chatlings' });
+  assert.ok(p.startsWith('000201010211'), 'static QR');
+  assert.ok(p.includes('0010A000000727'), 'NAPAS GUID');
+  assert.ok(p.includes('0006970422' + '01100123456789'), 'bank BIN + account');
+  assert.ok(p.includes('0208QRIBFTTA'), 'transfer to account');
+  assert.ok(p.includes('5303704') && p.includes('5802VN'));
+  assert.ok(p.includes('0816Ung ho Chatlings'));
+  assert.equal(p.slice(-8, -4), '6304');
+  assert.equal(p.slice(-4), crc16(p.slice(0, -4)), 'CRC covers everything up to 6304');
+});
+
+test('VietQR: reproduces a bank-issued QR byte for byte (the donation QR)', () => {
+  const { vietqrPayload } = require('../src/main/vietqr.js');
+  // decoded from the Sacombank app's own QR code
+  const bank = '00020101021138540010A00000072701240006970403011003847871170208QRIBFTTA53037045802VN62280824CHUYEN TIEN NHANH QUA QR63047BD1';
+  assert.equal(vietqrPayload({ bin: '970403', account: '0384787117', note: 'CHUYEN TIEN NHANH QUA QR' }), bank);
+});

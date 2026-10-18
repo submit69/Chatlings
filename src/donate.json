@@ -1,0 +1,15 @@
+{
+  "_comment": "Donation channels. \"image\" = a ready-made donation picture in src/renderer/brand/ (e.g. a MoMo or bank QR card), shown as is. Or fill \"bank\" to have a clean VietQR code generated (showAccount=false shows only the code). Empty values are hidden; with nothing filled in, no donate tile or menu item shows. After editing run: node scripts/make-donate.mjs",
+  "image": "donate.jpg",
+  "bank": {
+    "bankName": "",
+    "bin": "",
+    "account": "",
+    "holder": "",
+    "note": "",
+    "showAccount": false
+  },
+  "buyMeACoffee": "",
+  "kofi": "",
+  "githubSponsors": ""
+}

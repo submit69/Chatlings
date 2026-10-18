@@ -283,6 +283,7 @@
         el('div', { class: 'opt' }, el('label', {}, t('about.source')), link('https://github.com/submit69/chatlings', 'github.com/submit69/chatlings')),
         el('div', { class: 'opt' }, el('label', {}, 'noilamviec.com', el('span', { class: 'hint', text: t('about.nlvText') })), link('https://noilamviec.com/?utm_source=chatlings&utm_medium=app&utm_campaign=about', 'noilamviec.com')),
         el('div', { class: 'opt' }, el('label', {}, t('tray.checkUpdates')), el('button', { text: t('tray.checkUpdates'), onclick: () => bb.invoke('updates:check') })),
+        D.donate ? el('div', { class: 'opt' }, el('label', {}, t('about.donate'), el('span', { class: 'hint', text: t('donate.tileHint') })), el('button', { class: 'primary', text: '☕ ' + t('donate.tile'), onclick: () => bb.send('donate:open') })) : null,
         el('div', { class: 'opt' }, el('label', {}, t('about.license'), el('span', { class: 'hint', text: t('about.licenseText') }))),
       ),
       el('p', { class: 'muted small', text: t('about.disclaimer') }),

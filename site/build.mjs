@@ -28,7 +28,40 @@ const apps = registry
   .map((a) => `<li><i style="background:${a.color}">${glyph(a.icon)}</i>${esc(a.name)}</li>`)
   .join('\n          ');
 
-const html = fs.readFileSync(path.join(site, 'src', 'index.html'), 'utf8').replace('<!--APPS-->', apps);
+// Donate section, only with channels filled in src/donate.json (see scripts/make-donate.mjs).
+const donate = JSON.parse(fs.readFileSync(path.join(root, 'src', 'donate.json'), 'utf8'));
+const qr = path.join(root, 'src', 'renderer', 'brand', 'donate-qr.png');
+const picture = /^[\w.-]+\.(png|jpe?g|webp)$/i.test(donate.image || '') && fs.existsSync(path.join(root, 'src', 'renderer', 'brand', donate.image)) ? donate.image : '';
+const bank = !picture && donate.bank && donate.bank.account && fs.existsSync(qr) ? donate.bank : null;
+const btn = (url, label) => (url ? `<a class="btn" href="${esc(url)}" rel="noopener">${label}</a>` : '');
+const sponsors = /^[A-Za-z0-9-]+$/.test(donate.githubSponsors || '') ? `https://github.com/sponsors/${donate.githubSponsors}` : '';
+const links = [btn(donate.buyMeACoffee, '☕ Buy Me a Coffee'), btn(donate.kofi, 'Ko-fi'), btn(sponsors, '💜 GitHub Sponsors')].join('');
+let donateHtml = '';
+if (picture || bank || links) {
+  if (bank) fs.copyFileSync(qr, path.join(out, 'donate-qr.png'));
+  if (picture) fs.copyFileSync(path.join(root, 'src', 'renderer', 'brand', picture), path.join(out, 'donate' + path.extname(picture)));
+  donateHtml = `<section class="alt" id="donate">
+      <div class="wrap">
+        <div class="donate">
+          ${picture ? `<div class="pic"><img src="/donate${path.extname(picture)}" alt="VietQR MoMo" width="440" /></div>` : ''}
+          ${bank ? `<div class="qr"><img src="/donate-qr.png" alt="VietQR" width="200" height="200" /></div>` : ''}
+          <div>
+            <h2 style="text-align:left" data-i18n="d.title">Mời tác giả ly cafe ☕</h2>
+            <p class="muted" data-i18n="d.lead">Chatlings miễn phí và không quảng cáo. Nếu app giúp bạn đỡ mất thời gian, một ly cafe giúp dự án tiếp tục. Cảm ơn bạn!</p>
+            ${picture ? `<p class="acct" data-i18n="d.scanOnly">Quét mã QR bằng app ngân hàng bất kỳ (VietQR, Napas 247).</p>` : ''}
+            ${bank && bank.showAccount === false ? `<p class="acct" data-i18n="d.scanOnly">Quét mã QR bằng app ngân hàng bất kỳ (VietQR, Napas 247).</p>` : ''}
+            ${bank && bank.showAccount !== false ? `<p class="acct"><span data-i18n="d.scan">Quét QR bằng app ngân hàng bất kỳ, hoặc chuyển khoản:</span><br />${esc(bank.bankName || '')} · <b>${esc(String(bank.account).replace(/\s/g, ''))}</b>${bank.holder ? ' · ' + esc(bank.holder) : ''}</p>` : ''}
+            <div class="btns">${links}</div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
+const html = fs
+  .readFileSync(path.join(site, 'src', 'index.html'), 'utf8')
+  .replace('<!--APPS-->', apps)
+  .replace('<!--DONATE-->', donateHtml);
 fs.writeFileSync(path.join(out, 'index.html'), html);
 fs.copyFileSync(path.join(site, 'src', 'site.js'), path.join(out, 'site.js'));
 fs.copyFileSync(path.join(root, 'build', 'icon.png'), path.join(out, 'icon.png'));

@@ -110,6 +110,12 @@ PIN chỉ ngăn người dùng chung máy mở chat của bạn. PIN **không** 
 - Phím tắt toàn cục + ô tìm nhanh tài khoản
 - Ký số (SignPath)
 
+## Ủng hộ
+
+Chatlings miễn phí và không quảng cáo. Nếu app giúp bạn đỡ mất thời gian, mời tác giả ly cafe ☕ bằng cách quét mã này bằng MoMo hoặc app ngân hàng bất kỳ:
+
+<img src="src/renderer/brand/donate.jpg" width="440" alt="VietQR MoMo" />
+
 ## Đóng góp
 
 Thêm app hay thêm skin đều là PR nhỏ, gọn. Xem [CONTRIBUTING.md](CONTRIBUTING.md) và [hướng dẫn skin](src/renderer/skins/README.md).
