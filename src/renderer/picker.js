@@ -41,6 +41,28 @@
     ),
   );
 
+  // "Fun" section: the author's free browser games, opened in the browser (3D, too heavy for a chat frame).
+  for (const g of [
+    { id: 'superdog', name: 'Super Dog', url: 'https://superdog.submit69.com/' },
+    { id: 'chickenplus', name: 'Chicken Plus', url: 'https://chickenplus.submit69.com/' },
+    { id: 'superbus', name: 'Super Bus', url: 'https://superbus.submit69.com/' },
+  ]) {
+    $('fun').append(
+      el(
+        'button',
+        {
+          class: 'tile link',
+          type: 'button',
+          'data-link': g.id,
+          title: g.url.replace(/^https:\/\/|\/$/g, ''),
+          onclick: () => bb.invoke('app:openExternal', g.url + '?utm_source=chatlings&utm_medium=app&utm_campaign=picker'),
+        },
+        el('span', { class: 'glyph img' }, el('img', { src: 'brand/game-' + g.id + '.png', alt: '' })),
+        el('span', {}, el('div', { class: 'n', text: g.name }), el('div', { class: 'h', text: t('picker.game.' + g.id) })),
+      ),
+    );
+  }
+
   if (init.donate) {
     $('tier1').append(
       el(

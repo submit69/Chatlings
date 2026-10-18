@@ -698,7 +698,7 @@ function start() {
   handle('updates:check', () => updater.check({ interactive: true }));
   handle('app:openExternal', (_e, url) => {
     const d = donateInfo();
-    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/)/i.test(String(url)) || [d.buyMeACoffee, d.kofi, d.githubSponsors].includes(String(url));
+    const ok = /^https:\/\/(github\.com\/submit69\/chatlings|github\.com\/simple-icons|noilamviec\.com\/|(superdog|chickenplus|superbus)\.submit69\.com\/)/i.test(String(url)) || [d.buyMeACoffee, d.kofi, d.githubSponsors].includes(String(url));
     if (ok) shell.openExternal(String(url));
     return ok;
   });

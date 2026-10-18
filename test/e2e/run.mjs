@@ -381,6 +381,33 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
       });
     });
 
+    await t.test('add-account picker shows the link tiles and the fun section', async () => {
+      const r = await ev(async ({ BrowserWindow }) => {
+        const c = globalThis.__chatlings;
+        c.addAccount();
+        const find = () => BrowserWindow.getAllWindows().find((w) => /picker\.html/.test(w.webContents.getURL()));
+        let w;
+        for (let i = 0; i < 40 && !(w = find()); i++) await new Promise((res) => setTimeout(res, 100));
+        if (!w) return { error: 'no picker' };
+        await new Promise((res) => setTimeout(res, 800));
+        const out = await w.webContents.executeJavaScript(`({
+          fun: [...document.querySelectorAll('#fun .tile')].map((b) => b.dataset.link),
+          imgsOk: [...document.querySelectorAll('#fun img')].every((i) => i.complete && i.naturalWidth > 0),
+          heading: !!document.querySelector('[data-i18n="picker.fun"]').textContent,
+          nlv: !!document.querySelector('[data-link="noilamviec"]'),
+        })`);
+        out.png = (await w.webContents.capturePage()).toPNG().toString('base64');
+        w.close();
+        return out;
+      });
+      assert.ok(!r.error, r.error);
+      fs.writeFileSync(path.join(SHOTS, 'picker.png'), Buffer.from(r.png, 'base64'));
+      assert.deepEqual(r.fun, ['superdog', 'chickenplus', 'superbus']);
+      assert.ok(r.imgsOk, 'game icons load');
+      assert.ok(r.heading);
+      assert.ok(r.nlv);
+    });
+
     await t.test('security: locked app refuses changes; chat pages get no app API, no mic in the background', async () => {
       const r = await ev(async ({ BrowserWindow }) => {
         const c = globalThis.__chatlings;
