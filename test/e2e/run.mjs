@@ -125,7 +125,8 @@ test('Chatlings end-to-end (fake chats)', { timeout: 240000 }, async (t) => {
         const c = globalThis.__chatlings;
         const id = c.store.accounts()[1].id;
         const bar = c.popup.win.contentView.children.find((v) => /popup-bar/.test(v.webContents.getURL()));
-        return c.popup.isShowing(id) && { id, visible: c.accounts.state(id).view.getVisible(), bar: bar ? bar.getBounds() : null };
+        // the bar's URL is empty until its page starts loading (slow CI machines)
+        return c.popup.isShowing(id) && bar && { id, visible: c.accounts.state(id).view.getVisible(), bar: bar ? bar.getBounds() : null };
       }, null, 5000, 'popup open');
       assert.equal(r.visible, true);
       assert.ok(r.bar && r.bar.height === 36 && r.bar.width > 0, 'title bar (with ×) is laid out: ' + JSON.stringify(r.bar));
